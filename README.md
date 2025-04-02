@@ -28,11 +28,11 @@ Start the MCP Redis Server:
 python src/main.py
 ```
 
-Configure Claude Desktop to use this MCP Server by editing the `claude_desktop_config.json` configuration file.
+Configure Claude Desktop to use this MCP Server.
 
 1. Specify your Redis credentials and TLS configuration
 2. Retrieve your `uv` command full path (e.g. `which uv`)
-3. Edit the configuration file at `~/Library/Application\ Support/Claude/claude_desktop_config.json`
+3. Edit the `claude_desktop_config.json` configuration file (on a MacOS, at `~/Library/Application\ Support/Claude/claude_desktop_config.json`)
 
 ```commandline
 {
