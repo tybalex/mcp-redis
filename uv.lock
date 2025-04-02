@@ -252,7 +252,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "dotenv" },
     { name = "mcp", extra = ["cli"] },
-    { name = "pydantic-settings" },
     { name = "redis" },
 ]
 
@@ -260,7 +259,6 @@ dependencies = [
 requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.5.0" },
-    { name = "pydantic-settings", specifier = ">=2.0.0" },
     { name = "redis", specifier = ">=5.2.1" },
 ]
 
