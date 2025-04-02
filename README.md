@@ -22,17 +22,13 @@ source .venv/bin/activate
 uv sync
 ```
 
-## Usage
-Start the MCP Redis Server:
-```sh
-python src/main.py
-```
-
-Configure Claude Desktop to use this MCP Server.
+## Integration with Claude Desktop
+You can configure Claude Desktop to use this MCP Server.
 
 1. Specify your Redis credentials and TLS configuration
 2. Retrieve your `uv` command full path (e.g. `which uv`)
-3. Edit the `claude_desktop_config.json` configuration file (on a MacOS, at `~/Library/Application\ Support/Claude/claude_desktop_config.json`)
+3. Edit the `claude_desktop_config.json` configuration file 
+   - on a MacOS, at `~/Library/Application\ Support/Claude/`
 
 ```commandline
 {
@@ -57,7 +53,7 @@ Configure Claude Desktop to use this MCP Server.
 }
 ```
 
-You can troubleshoot any problem by tailing the log file.
+You can troubleshoot problems by tailing the log file.
 
 ```commandline
 tail -f ~/Library/Logs/Claude/mcp-server-redis.log
