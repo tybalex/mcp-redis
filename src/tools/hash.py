@@ -2,22 +2,29 @@ from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
 
+
 @mcp.tool()
-async def hset(name: str, key: str, value: str) -> str:
-    """Set a field in a hash stored at key.
-    
+async def hset(name: str, key: str, value: str, expire_seconds: int = None) -> str:
+    """Set a field in a hash stored at key with an optional expiration time.
+
     Args:
         name: The Redis hash key.
         key: The field name inside the hash.
         value: The value to set.
-    
+        expire_seconds: Optional; time in seconds after which the key should expire.
+
     Returns:
         A success message or an error message.
     """
     try:
         r = RedisConnectionManager.get_connection()
         r.hset(name, key, value)
-        return f"Field '{key}' set successfully in hash '{name}'."
+
+        if expire_seconds is not None:
+            r.expire(name, expire_seconds)
+
+        return f"Field '{key}' set successfully in hash '{name}'." + (
+            f" Expires in {expire_seconds} seconds." if expire_seconds else "")
     except RedisError as e:
         return f"Error setting field '{key}' in hash '{name}': {str(e)}"
 

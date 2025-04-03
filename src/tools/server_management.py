@@ -11,3 +11,32 @@ async def get_dbsize() -> int:
         return r.dbsize()
     except RedisError as e:
         return f"Error getting database size: {str(e)}"
+
+
+@mcp.tool()
+async def get_redis_info(section: str = "default") -> dict:
+    """Get Redis server information and statistics.
+
+    Args:
+        section: The section of the info command (default, memory, cpu, etc.).
+
+    Returns:
+        A dictionary of server information or an error message.
+    """
+    try:
+        r = RedisConnectionManager.get_connection()
+        info = r.info(section)
+        return info
+    except RedisError as e:
+        return f"Error retrieving Redis info: {str(e)}"
+
+
+@mcp.tool()
+async def get_client_list() -> list:
+    """Get a list of connected clients to the Redis server."""
+    try:
+        r = RedisConnectionManager.get_connection()
+        clients = r.client_list()
+        return clients
+    except RedisError as e:
+        return f"Error retrieving client list: {str(e)}"
