@@ -34,11 +34,11 @@ To configure the Redis Cloud API MCP Server, consider the following environment 
 | `REDIS_USERNAME`        | Default database username                                 | 'default'     |
 | `REDIS_PWD`             | Default database password                                 | ''            |
 | `REDIS_SSL`             | Enables or disables SSL/TLS                               | False         |
-| `REDIS_CA_PATH`         | CA certificate for verifying server                       | ''            |
-| `REDIS_SSL_KEYFILE`     | Client's private key file for client authentication       | ''            |
-| `REDIS_SSL_CERTFILE`    | Client's certificate file for client authentication       | ''            |
-| `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | ''            |
-| `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | ''            |
+| `REDIS_CA_PATH`         | CA certificate for verifying server                       | None          |
+| `REDIS_SSL_KEYFILE`     | Client's private key file for client authentication       | None          |
+| `REDIS_SSL_CERTFILE`    | Client's certificate file for client authentication       | None          |
+| `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | 'required'    |
+| `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | None          |
 
 ## Integration with Claude Desktop
 You can configure Claude Desktop to use this MCP Server.
