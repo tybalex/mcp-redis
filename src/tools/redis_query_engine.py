@@ -34,7 +34,7 @@ async def get_index_info(index_name: str) -> str:
 
 
 @mcp.tool()
-async def get_indexed_keys(index_name: str) -> str:
+async def get_indexed_keys_number(index_name: str) -> str:
     """Retrieve the number of indexed keys by the index
 
     Args:
@@ -48,3 +48,4 @@ async def get_indexed_keys(index_name: str) -> str:
         return r.ft(index_name).search(Query("*")).total
     except RedisError as e:
         return f"Error retrieving number of keys: {str(e)}"
+

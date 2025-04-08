@@ -1,6 +1,7 @@
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
+import numpy as np
 
 
 @mcp.tool()
@@ -97,3 +98,55 @@ async def hexists(name: str, key: str) -> bool:
         return r.hexists(name, key)
     except RedisError as e:
         return f"Error checking existence of field '{key}' in hash '{name}': {str(e)}"
+
+@mcp.tool()
+async def set_vector_in_hash(name: str, key: str, vector: list) -> bool:
+    """Store a vector as a field in a Redis hash.
+
+    Args:
+        name: The Redis hash key.
+        key: The field name inside the hash.
+        vector: The vector (list of numbers) to store in the hash.
+
+    Returns:
+        True if the vector was successfully stored, False otherwise.
+    """
+    try:
+        r = RedisConnectionManager.get_connection()
+
+        # Convert the vector to a NumPy array, then to a binary blob using np.float32
+        vector_array = np.array(vector, dtype=np.float32)
+        binary_blob = vector_array.tobytes()
+
+        r.hset(name, key, binary_blob)
+        return True
+    except RedisError as e:
+        return f"Error storing vector in hash '{name}' with key '{key}': {str(e)}"
+
+
+@mcp.tool()
+async def get_vector_from_hash(name: str, key: str):
+    """Retrieve a vector from a Redis hash and convert it back from binary blob.
+
+    Args:
+        name: The Redis hash key.
+        key: The field name inside the hash.
+
+    Returns:
+        The vector as a list of floats, or an error message if retrieval fails.
+    """
+    try:
+        r = RedisConnectionManager.get_connection(decode_responses=False)
+
+        # Retrieve the binary blob stored in the hash
+        binary_blob = r.hget(name, key)
+
+        if binary_blob:
+            # Convert the binary blob back to a NumPy array (assuming it's stored as float32)
+            vector_array = np.frombuffer(binary_blob, dtype=np.float32)
+            return vector_array.tolist()
+        else:
+            return f"Field '{key}' not found in hash '{name}'."
+
+    except RedisError as e:
+        return f"Error retrieving vector from hash '{name}' with key '{key}': {str(e)}"

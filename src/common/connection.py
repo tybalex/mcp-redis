@@ -5,6 +5,9 @@ from redis import Redis
 from typing import Optional
 from common.config import REDIS_CFG
 
+from common.config import generate_redis_uri
+
+
 class RedisConnectionManager:
     _instance: Optional[Redis] = None
 

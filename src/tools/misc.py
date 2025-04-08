@@ -4,24 +4,6 @@ from redis.exceptions import RedisError
 from common.server import mcp
 
 
-@mcp.tool()
-async def execute_raw_command(command: str, *args) -> str:
-    """Execute a raw Redis raw command like SET, GET, HSET, HGET, JSON.SET, JSON.GET, FT.SEARCH or FT.AGGREGATE.
-       Every Redis command can be executed using this call
-
-    Args:
-        command (str): The Redis command to execute.
-        *args: Additional arguments for the command.
-
-    Returns:
-        str: The result of the command execution or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        return r.execute_command(command, *args)
-    except RedisError as e:
-        return f"Error executing command {command}: {str(e)}"
-
 @mcp.tool()  
 async def get_key_info(key: str) -> Dict[str, Any]:
     try:
