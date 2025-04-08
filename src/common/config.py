@@ -5,6 +5,7 @@ load_dotenv()
 
 REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "port": int(os.getenv('REDIS_PORT',6379)),
+             "username": os.getenv('REDIS_USERNAME','default'),
              "password": os.getenv('REDIS_PWD',''),
              "ssl": os.getenv('REDIS_SSL', False),
              "ssl_ca_path": os.getenv('REDIS_CA_PATH',''),

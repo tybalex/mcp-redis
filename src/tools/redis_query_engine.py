@@ -48,21 +48,3 @@ async def get_indexed_keys(index_name: str) -> str:
         return r.ft(index_name).search(Query("*")).total
     except RedisError as e:
         return f"Error retrieving number of keys: {str(e)}"
-
-
-@mcp.tool()
-async def execute_redis_search(command: str, *args) -> str:
-    """Execute a raw Redis search command like FT.SEARCH or FT.AGGREGATE.
-
-    Args:
-        command (str): The Redis command to execute.
-        *args: Additional arguments for the command.
-
-    Returns:
-        str: The result of the command execution or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        return r.execute_command(command, *args)
-    except RedisError as e:
-        return f"Error executing command {command}: {str(e)}"

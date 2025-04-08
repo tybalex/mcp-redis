@@ -13,9 +13,10 @@ class RedisConnectionManager:
         if cls._instance is None:
             try:
                 print("Initializing Redis connection", file=sys.stderr)
-                cls._instance = redis.StrictRedis(
+                cls._instance = redis.Redis(
                     host=REDIS_CFG["host"],
                     port=REDIS_CFG["port"],
+                    username=REDIS_CFG["username"],
                     password=REDIS_CFG["password"],
                     ssl=REDIS_CFG["ssl"],
                     ssl_ca_path=REDIS_CFG["ssl_ca_path"],
