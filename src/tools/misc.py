@@ -14,19 +14,6 @@ async def get_key_info(key: str) -> Dict[str, Any]:
             'type': key_type,
             'ttl': r.ttl(key)
         }
-
-        if key_type == 'string':
-            info['value'] = r.get(key)
-        elif key_type == 'list':
-            info['value'] = r.lrange(key, 0, -1)
-        elif key_type == 'hash':
-            info['value'] = r.hgetall(key)
-        elif key_type == 'set':
-            info['value'] = r.smembers(key)
-        elif key_type == 'zset':
-            info['value'] = r.zrange(key, 0, -1, withscores=True)
-        elif key_type == 'ReJSON-RL':
-            info['value'] = r.json().get(key, "$")
         
         return info
     except RedisError as e:
