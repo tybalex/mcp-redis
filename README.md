@@ -25,7 +25,7 @@ uv sync
 
 ## Configuration
 
-To configure the Redis Cloud API MCP Server, consider the following environment variables:
+To configure this Redis MCP Server, consider the following environment variables:
 
 | Name                    | Description                                               | Default Value |
 |-------------------------|-----------------------------------------------------------|---------------|

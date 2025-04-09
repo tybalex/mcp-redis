@@ -1,4 +1,3 @@
-from typing import Dict, Any
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
