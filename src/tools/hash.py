@@ -100,12 +100,12 @@ async def hexists(name: str, key: str) -> bool:
         return f"Error checking existence of field '{key}' in hash '{name}': {str(e)}"
 
 @mcp.tool()
-async def set_vector_in_hash(name: str, key: str, vector: list) -> bool:
+async def set_vector_in_hash(name: str, vector: list, vector_field: str = "vector") -> bool:
     """Store a vector as a field in a Redis hash.
 
     Args:
         name: The Redis hash key.
-        key: The field name inside the hash.
+        vector_field: The field name inside the hash. Unless specifically required, use the default field name
         vector: The vector (list of numbers) to store in the hash.
 
     Returns:
@@ -118,19 +118,19 @@ async def set_vector_in_hash(name: str, key: str, vector: list) -> bool:
         vector_array = np.array(vector, dtype=np.float32)
         binary_blob = vector_array.tobytes()
 
-        r.hset(name, key, binary_blob)
+        r.hset(name, vector_field, binary_blob)
         return True
     except RedisError as e:
-        return f"Error storing vector in hash '{name}' with key '{key}': {str(e)}"
+        return f"Error storing vector in hash '{name}' with field '{vector_field}': {str(e)}"
 
 
 @mcp.tool()
-async def get_vector_from_hash(name: str, key: str):
+async def get_vector_from_hash(name: str, vector_field: str = "vector"):
     """Retrieve a vector from a Redis hash and convert it back from binary blob.
 
     Args:
         name: The Redis hash key.
-        key: The field name inside the hash.
+        vector_field: The field name inside the hash. Unless specifically required, use the default field name
 
     Returns:
         The vector as a list of floats, or an error message if retrieval fails.
@@ -139,14 +139,14 @@ async def get_vector_from_hash(name: str, key: str):
         r = RedisConnectionManager.get_connection(decode_responses=False)
 
         # Retrieve the binary blob stored in the hash
-        binary_blob = r.hget(name, key)
+        binary_blob = r.hget(name, vector_field)
 
         if binary_blob:
             # Convert the binary blob back to a NumPy array (assuming it's stored as float32)
             vector_array = np.frombuffer(binary_blob, dtype=np.float32)
             return vector_array.tolist()
         else:
-            return f"Field '{key}' not found in hash '{name}'."
+            return f"Field '{vector_field}' not found in hash '{name}'."
 
     except RedisError as e:
         return f"Error retrieving vector from hash '{name}' with key '{key}': {str(e)}"

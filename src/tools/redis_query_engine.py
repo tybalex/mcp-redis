@@ -53,7 +53,7 @@ async def get_indexed_keys_number(index_name: str) -> str:
 
 
 @mcp.tool()
-async def create_vector_index_hash(index_name: str,
+async def create_vector_index_hash(index_name: str = "vector_index",
                        prefix: str = "doc:",
                        vector_field: str = "vector",
                        dim: int = 1536,
@@ -65,9 +65,9 @@ async def create_vector_index_hash(index_name: str,
     search using the HNSW algorithm and float32 vector embeddings.
 
     Args:
-        index_name: The name of the Redis index to create.
-        prefix: The key prefix used to identify documents to index (e.g., 'doc:').
-        vector_field: The name of the vector field to be indexed for similarity search.
+        index_name: The name of the Redis index to create. Unless specifically required, use the default name for the index.
+        prefix: The key prefix used to identify documents to index (e.g., 'doc:'). Unless specifically required, use the default prefix.
+        vector_field: The name of the vector field to be indexed for similarity search. Unless specifically required, use the default field name
         dim: The dimensionality of the vectors stored under the vector_field.
         distance_metric: The distance function to use (e.g., 'COSINE', 'L2', 'IP').
 
@@ -97,8 +97,8 @@ async def create_vector_index_hash(index_name: str,
 
 
 @mcp.tool()
-async def vector_search_hash(index_name: str,
-                            query_vector: list,
+async def vector_search_hash(query_vector: list,
+                            index_name: str = "vector_index",
                             vector_field: str = "vector",
                             k: int = 5,
                             return_fields: list = None) -> list:
@@ -106,9 +106,9 @@ async def vector_search_hash(index_name: str,
     Perform a KNN vector similarity search using Redis 8 or later version on vectors stored in hash data structures.
 
     Args:
-        index_name: Name of the Redis index.
-        vector_field: Name of the indexed vector field.
         query_vector: List of floats to use as the query vector.
+        index_name: Name of the Redis index. Unless specifically specified, use the default index name.
+        vector_field: Name of the indexed vector field. Unless specifically required, use the default field name
         k: Number of nearest neighbors to return.
         return_fields: List of fields to return (optional).
 

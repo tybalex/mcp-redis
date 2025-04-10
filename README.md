@@ -1,7 +1,12 @@
 # Redis MCP Server
 
 ## Overview
-The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis.
+The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis. Using this MCP Server, you can ask questions like:
+
+- "Store the entire conversation in a stream"
+- "Cache this item"
+- "Store the session with an expiration time"
+- "Index and search this vector"
 
 ## Features
 - **Natural Language Queries**: Enables AI agents to query and update Redis using natural language.
@@ -9,6 +14,25 @@ The Redis MCP Server is a **natural language interface** designed for agentic ap
 - **Full Redis Support**: Handles **hashes, lists, sets, sorted sets, streams**, and more.
 - **Search & Filtering**: Supports efficient data retrieval and searching in Redis.
 - **Scalable & Lightweight**: Designed for **high-performance** data operations.
+
+## Tools
+
+This MCP Server provides tools to manage the data stored in Redis.
+
+- `string` tools to set, get strings with expiration. Useful for storing simple configuration values, session data, or caching responses.
+- `hash` tools to store field-value pairs within a single key. The hash can store vector embeddings. Useful for representing objects with multiple attributes, user profiles, or product information where fields can be accessed individually.
+- `list` tools with common operations to append and pop items. Useful for queues, message brokers, or maintaining a list of most recent actions.
+- `set` tools to add, remove and list set members. Useful for tracking unique values like user IDs or tags, and for performing set operations like intersection.
+- `sorted set` tools to manage data for e.g. leaderboards, priority queues, or time-based analytics with score-based ordering.
+- `pub/sub` functionality to publish messages to channels and subscribe to receive them. Useful for real-time notifications, chat applications, or distributing updates to multiple clients.
+- `streams` tools to add, read, and delete from data streams. Useful for event sourcing, activity feeds, or sensor data logging with consumer groups support.
+- `JSON` tools to store, retrieve, and manipulate JSON documents in Redis. Useful for complex nested data structures, document databases, or configuration management with path-based access.
+
+Additional tools.
+
+- `query engine` tools to manage vector indexes and perform vector search
+- `server management` tool to retrieve information about the database
+
 
 ## Installation
 ```sh

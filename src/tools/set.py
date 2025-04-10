@@ -64,21 +64,3 @@ async def smembers(name: str) -> list:
     except RedisError as e:
         return f"Error retrieving members of set '{name}': {str(e)}"
 
-
-@mcp.tool()
-async def sexpire(name: str, expire_seconds: int) -> str:
-    """Set an expiration time for a Redis set.
-
-    Args:
-        name: The Redis set key.
-        expire_seconds: Time in seconds after which the set should expire.
-
-    Returns:
-        A success message or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        success = r.expire(name, expire_seconds)
-        return f"Expiration set to {expire_seconds} seconds for set '{name}'." if success else f"Set '{name}' does not exist."
-    except RedisError as e:
-        return f"Error setting expiration for set '{name}': {str(e)}"
