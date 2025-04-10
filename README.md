@@ -64,6 +64,28 @@ To configure this Redis MCP Server, consider the following environment variables
 | `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | `"required"`  |
 | `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | None          |
 
+## Integration with OpenAI Agents SDK
+
+Integrate this MCP Server with the OpenAI Agents SDK. Read the [documents](https://openai.github.io/openai-agents-python/mcp/) to learn more about the integration of the SDK with MCP.
+
+Install the Python SDK.
+
+```commandline
+pip install openai-agents
+```
+
+Configure the OpenAI token:
+
+```commandline
+export OPENAI_API_KEY="<openai_token>"
+```
+
+And run the [application](./examples/redis_assistant.py).
+
+```commandline
+python3.13 redis_assistant.py 
+```
+
 ## Integration with Claude Desktop
 You can configure Claude Desktop to use this MCP Server.
 
