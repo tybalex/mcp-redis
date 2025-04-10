@@ -12,7 +12,7 @@ async def build_agent():
         params={
             "command": "uv",
             "args": [
-                "--directory", "<path_to_mcp_server>/mcp-redis/src/",
+                "--directory", "../src/", # change with the path to the MCP server
                 "run", "main.py"
             ],
         }
