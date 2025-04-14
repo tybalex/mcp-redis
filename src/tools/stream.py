@@ -4,7 +4,7 @@ from common.server import mcp
 
 
 @mcp.tool()
-async def add_to_stream(key: str, fields: dict, expiration: int = None) -> str:
+async def xadd(key: str, fields: dict, expiration: int = None) -> str:
     """Add an entry to a Redis stream with an optional expiration time.
 
     Args:
@@ -27,7 +27,7 @@ async def add_to_stream(key: str, fields: dict, expiration: int = None) -> str:
 
 
 @mcp.tool()
-async def read_from_stream(key: str, count: int = 1) -> str:
+async def xrange(key: str, count: int = 1) -> str:
     """Read entries from a Redis stream.
 
     Args:
@@ -46,7 +46,7 @@ async def read_from_stream(key: str, count: int = 1) -> str:
 
 
 @mcp.tool()
-async def delete_from_stream(key: str, entry_id: str) -> str:
+async def xdel(key: str, entry_id: str) -> str:
     """Delete an entry from a Redis stream.
 
     Args:

@@ -4,7 +4,7 @@ from common.server import mcp
 
 
 @mcp.tool()
-async def set_redis_string(key: str, value: str, expiration: int = None) -> str:
+async def set(key: str, value: str, expiration: int = None) -> str:
     """Set a Redis string value with an optional expiration time.
 
     Args:
@@ -27,7 +27,7 @@ async def set_redis_string(key: str, value: str, expiration: int = None) -> str:
 
 
 @mcp.tool()
-async def get_redis_string(key: str) -> str:
+async def get(key: str) -> str:
     """Get a Redis string value.
 
     Args:
@@ -43,20 +43,3 @@ async def get_redis_string(key: str) -> str:
     except RedisError as e:
         return f"Error retrieving key {key}: {str(e)}"
 
-
-@mcp.tool()
-async def delete_redis_key(key: str) -> str:
-    """Delete a Redis key.
-
-    Args:
-        key (str): The key to delete.
-
-    Returns:
-        str: Confirmation message or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        result = r.delete(key)
-        return f"Successfully deleted {key}" if result else f"Key {key} not found"
-    except RedisError as e:
-        return f"Error deleting key {key}: {str(e)}"

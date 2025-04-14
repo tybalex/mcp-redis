@@ -3,7 +3,7 @@ from redis.exceptions import RedisError
 from common.server import mcp
 
 @mcp.tool()
-async def get_dbsize() -> int:
+async def dbsize() -> int:
     """Get the number of keys stored in the Redis database
     """
     try:
@@ -14,7 +14,7 @@ async def get_dbsize() -> int:
 
 
 @mcp.tool()
-async def get_redis_info(section: str = "default") -> dict:
+async def info(section: str = "default") -> dict:
     """Get Redis server information and statistics.
 
     Args:
@@ -32,7 +32,7 @@ async def get_redis_info(section: str = "default") -> dict:
 
 
 @mcp.tool()
-async def get_client_list() -> list:
+async def client_list() -> list:
     """Get a list of connected clients to the Redis server."""
     try:
         r = RedisConnectionManager.get_connection()

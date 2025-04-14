@@ -147,5 +147,5 @@ npx @modelcontextprotocol/inspector uv run src/main.py
 This project is licensed under the **MIT License**.
 
 ## Contact
-For questions or support, reach out via [GitHub Issues](https://github.com/redis/mcp-redis-server/issues).
+For questions or support, reach out via [GitHub Issues](https://github.com/redis/mcp-redis/issues).
 

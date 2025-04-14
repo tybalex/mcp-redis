@@ -66,21 +66,3 @@ async def json_del(name: str, path: str = '$') -> str:
     except RedisError as e:
         return f"Error deleting JSON value at path '{path}' in '{name}': {str(e)}"
 
-
-@mcp.tool()
-async def json_expire(name: str, expire_seconds: int) -> str:
-    """Set an expiration time for a Redis JSON document.
-
-    Args:
-        name: The Redis key where the JSON document is stored.
-        expire_seconds: Time in seconds after which the key should expire.
-
-    Returns:
-        A success message or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        success = r.expire(name, expire_seconds)
-        return f"Expiration set to {expire_seconds} seconds for JSON document '{name}'." if success else f"JSON document '{name}' does not exist."
-    except RedisError as e:
-        return f"Error setting expiration for JSON document '{name}': {str(e)}"

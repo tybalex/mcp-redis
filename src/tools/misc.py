@@ -4,8 +4,34 @@ from redis.exceptions import RedisError
 from common.server import mcp
 
 
+@mcp.tool()
+async def delete(key: str) -> str:
+    """Delete a Redis key.
+
+    Args:
+        key (str): The key to delete.
+
+    Returns:
+        str: Confirmation message or an error message.
+    """
+    try:
+        r = RedisConnectionManager.get_connection()
+        result = r.delete(key)
+        return f"Successfully deleted {key}" if result else f"Key {key} not found"
+    except RedisError as e:
+        return f"Error deleting key {key}: {str(e)}"
+
+
 @mcp.tool()  
-async def get_key_info(key: str) -> Dict[str, Any]:
+async def type(key: str) -> Dict[str, Any]:
+    """Returns the string representation of the type of the value stored at key
+
+    Args:
+        key (str): The key to check.
+
+    Returns:
+        str: The type of key, or none when key doesn't exist
+    """
     try:
         r = RedisConnectionManager.get_connection()
         key_type = r.type(key).decode('utf-8')
@@ -40,7 +66,7 @@ async def expire(name: str, expire_seconds: int) -> str:
 
 
 @mcp.tool()
-async def rename_key(old_key: str, new_key: str) -> Dict[str, Any]:
+async def rename(old_key: str, new_key: str) -> Dict[str, Any]:
     """
     Renames a Redis key from old_key to new_key.
 

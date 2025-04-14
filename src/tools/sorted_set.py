@@ -4,7 +4,7 @@ from common.server import mcp
 
 
 @mcp.tool()
-async def add_to_sorted_set(key: str, score: float, member: str, expiration: int = None) -> str:
+async def zadd(key: str, score: float, member: str, expiration: int = None) -> str:
     """Add a member to a Redis sorted set with an optional expiration time.
 
     Args:
@@ -28,7 +28,7 @@ async def add_to_sorted_set(key: str, score: float, member: str, expiration: int
 
 
 @mcp.tool()
-async def get_sorted_set_range(key: str, start: int, end: int, with_scores: bool = False) -> str:
+async def zrange(key: str, start: int, end: int, with_scores: bool = False) -> str:
     """Retrieve a range of members from a Redis sorted set.
 
     Args:
@@ -49,7 +49,7 @@ async def get_sorted_set_range(key: str, start: int, end: int, with_scores: bool
 
 
 @mcp.tool()
-async def remove_from_sorted_set(key: str, member: str) -> str:
+async def zrem(key: str, member: str) -> str:
     """Remove a member from a Redis sorted set.
 
     Args:

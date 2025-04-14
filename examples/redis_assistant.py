@@ -7,7 +7,7 @@ from collections import deque
 
 # Set up and create the agent
 async def build_agent():
-    # Redis MCP Server
+    # Redis MCP Server. Pass the environment configuration for the MCP Server in the JSON
     server = MCPServerStdio(
         params={
             "command": "uv",
@@ -15,6 +15,10 @@ async def build_agent():
                 "--directory", "../src/", # change with the path to the MCP server
                 "run", "main.py"
             ],
+        "env": {
+            "REDIS_HOST": "127.0.0.1",
+            "REDIS_PORT": "6379"
+        },
         }
     )
 
