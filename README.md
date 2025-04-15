@@ -86,6 +86,8 @@ And run the [application](./examples/redis_assistant.py).
 python3.13 redis_assistant.py 
 ```
 
+You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
+
 ## Integration with Claude Desktop
 You can configure Claude Desktop to use this MCP Server.
 
