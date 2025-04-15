@@ -16,7 +16,6 @@ import tools.pub_sub
 class RedisMCPServer:
     def __init__(self):
         redis_client = RedisConnectionManager.get_connection(decode_responses=False)
-        print(redis_client.ping())
 
     def run(self):
         mcp.run(transport='stdio')
