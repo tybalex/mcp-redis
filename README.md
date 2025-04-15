@@ -1,4 +1,5 @@
 # Redis MCP Server
+[![smithery badge](https://smithery.ai/server/installations/@redis/mcp-redis)](https://smithery.ai/context/protocol/@redis/mcp-redis)
 
 ## Overview
 The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis. Using this MCP Server, you can ask questions like:
@@ -35,6 +36,16 @@ Additional tools.
 
 
 ## Installation
+
+### Installing via Smithery
+
+To install Redis MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@redis/mcp-redis):
+
+```bash
+npx -y @smithery/cli install @redis/mcp-redis --client claude
+```
+
+### Manual Installation
 ```sh
 # Clone the repository
 git clone https://github.com/redis/mcp-redis.git
