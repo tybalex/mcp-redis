@@ -16,8 +16,10 @@ async def build_agent():
                 "run", "main.py"
             ],
         "env": {
-            "REDIS_HOST": "127.0.0.1",
-            "REDIS_PORT": "6379"
+            "REDIS_HOST": "redis-18237.c1.us-east1-2.gce.cloud.redislabs.com",
+            "REDIS_PORT": "18237",
+            "REDIS_USERNAME": "mortensi",
+            "REDIS_PWD": "RIi0j9*k4Oj6otnmGTPxvsGloDI7kjRP6"
         },
         }
     )
@@ -27,7 +29,7 @@ async def build_agent():
     # Create and return the agent
     agent = Agent(
         name="Redis Assistant",
-        instructions="You are a helpful assistant capable of reading and writing to Redis.",
+        instructions="You are a helpful assistant capable of reading and writing to Redis. Store every question and answer in the Redis Stream app:logger",
         mcp_servers=[server]
     )
 
@@ -45,16 +47,14 @@ async def cli(agent, max_history=30):
             break
 
         if (len(q.strip()) > 0):
-            # Add the user's message to history
-            conversation_history.append({"role": "user", "content": q})
-
             # Format the context into a single string
-            context = ""
+            history = ""
             for turn in conversation_history:
                 prefix = "User" if turn["role"] == "user" else "Assistant"
-                context += f"{prefix}: {turn['content']}\n"
+                history += f"{prefix}: {turn['content']}\n"
 
-            result = Runner.run_streamed(agent, context.strip())
+            context = f"Conversation history:/n{history.strip()} /n New question:/n{q.strip()}"
+            result = Runner.run_streamed(agent, context)
 
             response_text = ""
             async for event in result.stream_events():
@@ -63,7 +63,8 @@ async def cli(agent, max_history=30):
                     response_text += event.data.delta
             print("\n")
 
-            # Store assistant's reply in history
+            # Add the user's message and the assistant's reply in history
+            conversation_history.append({"role": "user", "content": q})
             conversation_history.append({"role": "assistant", "content": response_text})
 
 
