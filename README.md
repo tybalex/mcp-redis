@@ -1,6 +1,5 @@
 # Redis MCP Server
-[![smithery badge](https://smithery.ai/server/installations/@redis/mcp-redis)](https://smithery.ai/context/protocol/@redis/mcp-redis)
-
+[![smithery badge](https://smithery.ai/badge/@redis/mcp-redis)](https://smithery.ai/server/@redis/mcp-redis)
 ## Overview
 The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis. Using this MCP Server, you can ask questions like:
 
