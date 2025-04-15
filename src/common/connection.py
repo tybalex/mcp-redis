@@ -15,7 +15,6 @@ class RedisConnectionManager:
     def get_connection(cls, decode_responses=True) -> Redis:
         if cls._instance is None:
             try:
-                print("Initializing Redis connection", file=sys.stderr)
                 cls._instance = redis.Redis(
                     host=REDIS_CFG["host"],
                     port=REDIS_CFG["port"],

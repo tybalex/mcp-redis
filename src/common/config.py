@@ -4,6 +4,8 @@ import os
 
 load_dotenv()
 
+MCP_TRANSPORT = os.getenv('MCP_TRANSPORT', 'stdio')
+
 REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "port": int(os.getenv('REDIS_PORT',6379)),
              "username": os.getenv('REDIS_USERNAME', None),

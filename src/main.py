@@ -1,3 +1,5 @@
+import sys
+
 from common.connection import RedisConnectionManager
 from common.server import mcp
 import tools.server_management
@@ -11,14 +13,15 @@ import tools.sorted_set
 import tools.set
 import tools.stream
 import tools.pub_sub
+from common.config import MCP_TRANSPORT
 
 
 class RedisMCPServer:
     def __init__(self):
-        redis_client = RedisConnectionManager.get_connection(decode_responses=False)
+        print("Starting the RedisMCPServer", file=sys.stderr)
 
     def run(self):
-        mcp.run(transport='stdio')
+        mcp.run(transport=MCP_TRANSPORT)
 
 if __name__ == "__main__":
     server = RedisMCPServer()
