@@ -73,6 +73,38 @@ To configure this Redis MCP Server, consider the following environment variables
 | `REDIS_SSL_CERTFILE`    | Client's certificate file for client authentication       | None          |
 | `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | `"required"`  |
 | `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | None          |
+| `REDIS_CLUSTER_MODE`    | Enable Redis Cluster mode                                 | `False`       |
+| `REDIS_CLUSTER_NODES`   | Comma-separated list of cluster nodes (host:port)         | ""            |
+
+## Docker Deployment
+
+You can run the Redis MCP Server in a Docker container:
+
+```bash
+# Build the Docker image
+docker build -t mcp-redis .
+
+# Run in standalone mode
+docker run --rm -it \
+  -e REDIS_HOST=<your-redis-host> \
+  -e REDIS_PORT=<your-redis-port> \
+  -p 3333:3333 \
+  mcp-redis
+
+# Run in cluster mode (only one node needed, others will be auto-discovered)
+docker run --rm -it \
+  -e REDIS_CLUSTER_MODE=true \
+  -e REDIS_HOST=<your-cluster-node-host> \
+  -p 3333:3333 \
+  mcp-redis
+
+# Or specify one or more cluster nodes explicitly
+docker run --rm -it \
+  -e REDIS_CLUSTER_MODE=true \
+  -e REDIS_CLUSTER_NODES="<node1:port>" \
+  -p 3333:3333 \
+  mcp-redis
+```
 
 ## Integration with OpenAI Agents SDK
 
@@ -122,7 +154,9 @@ You can configure Claude Desktop to use this MCP Server.
                 "REDIS_PORT": "<your_redis_database_port>",
                 "REDIS_PSW": "<your_redis_database_password>",
                 "REDIS_SSL": True|False,
-                "REDIS_CA_PATH": "<your_redis_ca_path>"
+                "REDIS_CA_PATH": "<your_redis_ca_path>",
+                "REDIS_CLUSTER_MODE": True|False,
+                "REDIS_CLUSTER_NODES": "<single_node:port>" // Optional, uses REDIS_HOST if not specified
             }
         }
     }
