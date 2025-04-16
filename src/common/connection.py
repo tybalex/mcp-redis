@@ -16,38 +16,36 @@ class RedisConnectionManager:
     def get_connection(cls, decode_responses=True) -> Redis:
         if cls._instance is None:
             try:
+                # Common connection parameters
+                common_params = {
+                    "host": REDIS_CFG["host"],
+                    "port": REDIS_CFG["port"],
+                    "username": REDIS_CFG["username"],
+                    "password": REDIS_CFG["password"],
+                    "ssl": REDIS_CFG["ssl"],
+                    "ssl_ca_path": REDIS_CFG["ssl_ca_path"],
+                    "ssl_keyfile": REDIS_CFG["ssl_keyfile"],
+                    "ssl_certfile": REDIS_CFG["ssl_certfile"],
+                    "ssl_cert_reqs": REDIS_CFG["ssl_cert_reqs"],
+                    "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
+                    "decode_responses": decode_responses,
+                    "lib_name": f"redis-py(mcp-server_v{__version__})"
+                }
+
                 if REDIS_CFG["cluster_mode"]:
-                    cls._instance = RedisCluster(
-                        host=REDIS_CFG["host"],
-                        port=REDIS_CFG["port"],
-                        username=REDIS_CFG["username"],
-                        password=REDIS_CFG["password"],
-                        ssl=REDIS_CFG["ssl"],
-                        ssl_ca_path=REDIS_CFG["ssl_ca_path"],
-                        ssl_keyfile=REDIS_CFG["ssl_keyfile"],
-                        ssl_certfile=REDIS_CFG["ssl_certfile"],
-                        ssl_cert_reqs=REDIS_CFG["ssl_cert_reqs"],
-                        ssl_ca_certs=REDIS_CFG["ssl_ca_certs"],
-                        decode_responses=decode_responses,
-                        max_connections_per_node=10,
-                        lib_name=f"redis-py(mcp-server_v{__version__})"
-                    )
+                    # Cluster-specific parameters
+                    cluster_params = {
+                        **common_params,
+                        "max_connections_per_node": 10
+                    }
+                    cls._instance = RedisCluster(**cluster_params)
                 else:
-                    cls._instance = redis.Redis(
-                        host=REDIS_CFG["host"],
-                        port=REDIS_CFG["port"],
-                        username=REDIS_CFG["username"],
-                        password=REDIS_CFG["password"],
-                        ssl=REDIS_CFG["ssl"],
-                        ssl_ca_path=REDIS_CFG["ssl_ca_path"],
-                        ssl_keyfile=REDIS_CFG["ssl_keyfile"],
-                        ssl_certfile=REDIS_CFG["ssl_certfile"],
-                        ssl_cert_reqs=REDIS_CFG["ssl_cert_reqs"],
-                        ssl_ca_certs=REDIS_CFG["ssl_ca_certs"],
-                        decode_responses=decode_responses,
-                        max_connections=10,
-                        lib_name=f"redis-py(mcp-server_v{__version__})"
-                    )
+                    # Standalone-specific parameters
+                    standalone_params = {
+                        **common_params,
+                        "max_connections": 10
+                    }
+                    cls._instance = redis.Redis(**standalone_params)
 
             except redis.exceptions.ConnectionError:
                 print("Failed to connect to Redis server", file=sys.stderr)
