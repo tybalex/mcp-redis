@@ -3,39 +3,24 @@ from version import __version__
 import redis
 from redis import Redis
 from redis.cluster import RedisCluster
-from typing import Optional, Union, List, Dict, Any, Tuple
-from common.config import REDIS_CFG, REDIS_CLUSTER_MODE, REDIS_CLUSTER_NODES
+from typing import Optional
+from common.config import REDIS_CFG, REDIS_CLUSTER_MODE
 
 from common.config import generate_redis_uri
 
 
 class RedisConnectionManager:
-    _instance: Optional[Union[Redis, RedisCluster]] = None
+    _instance: Optional[Redis] = None
 
     @classmethod
-    def get_connection(cls, decode_responses=True) -> Union[Redis, RedisCluster]:
+    def get_connection(cls, decode_responses=True) -> Redis:
         if cls._instance is None:
             try:
                 if REDIS_CLUSTER_MODE:
-                    # In cluster mode, we can connect to one node and the client will discover the rest
-                    # If specific cluster nodes are provided, use the first one as the startup node
-                    if REDIS_CLUSTER_NODES and REDIS_CLUSTER_NODES[0]:
-                        node = REDIS_CLUSTER_NODES[0]
-                        if ':' in node:
-                            host, port = node.split(':')
-                            port = int(port)
-                        else:
-                            # Default to the configured port if only host is provided
-                            host = node
-                            port = REDIS_CFG["port"]
-                    else:
-                        # Use the primary node from REDIS_CFG as the startup node
-                        host = REDIS_CFG["host"]
-                        port = REDIS_CFG["port"]
-                    
+                    # In cluster mode, connect to the host and port from REDIS_CFG
                     cls._instance = RedisCluster(
-                        host=host,
-                        port=port,
+                        host=REDIS_CFG["host"],
+                        port=REDIS_CFG["port"],
                         username=REDIS_CFG["username"],
                         password=REDIS_CFG["password"],
                         ssl=REDIS_CFG["ssl"],

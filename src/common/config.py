@@ -9,10 +9,6 @@ MCP_TRANSPORT = os.getenv('MCP_TRANSPORT', 'stdio')
 # Add cluster mode flag
 REDIS_CLUSTER_MODE = os.getenv('REDIS_CLUSTER_MODE', 'false').lower() in ('true', '1', 't')
 
-# Add cluster nodes configuration - only one node is required, others will be auto-discovered
-# If not specified, REDIS_HOST and REDIS_PORT will be used as the initial node
-REDIS_CLUSTER_NODES = os.getenv('REDIS_CLUSTER_NODES', '').split(',') if os.getenv('REDIS_CLUSTER_NODES') else []
-
 REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "port": int(os.getenv('REDIS_PORT',6379)),
              "username": os.getenv('REDIS_USERNAME', None),

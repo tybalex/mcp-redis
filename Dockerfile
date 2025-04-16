@@ -11,14 +11,8 @@ COPY . /app
 RUN pip install --upgrade pip \
     && pip install .
 
-# Default environment variables
-ENV REDIS_HOST=127.0.0.1 \
-    REDIS_PORT=6379 \
-    REDIS_CLUSTER_MODE=false \
-    REDIS_CLUSTER_NODES=""
-
-# Expose the MCP server port
-EXPOSE 3333
+# Expose necessary port if any (MCP typically uses stdio, but if needed, uncomment below)
+# EXPOSE 8000
 
 # Run the MCP Server
 CMD ["python", "src/main.py"]
