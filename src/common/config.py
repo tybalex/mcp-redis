@@ -16,7 +16,7 @@ REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "ssl_certfile": os.getenv('REDIS_SSL_CERTFILE', None),
              "ssl_cert_reqs": os.getenv('REDIS_SSL_CERT_REQS', 'required'),
              "ssl_ca_certs": os.getenv('REDIS_SSL_CA_CERTS', None),
-             "cluster_mode": os.getenv('REDIS_CLUSTER_MODE', 'false').lower() in ('true', '1', 't')}
+             "cluster_mode": os.getenv('REDIS_CLUSTER_MODE', False) in ('true', '1', 't')}
 
 
 def generate_redis_uri():

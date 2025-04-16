@@ -17,7 +17,6 @@ class RedisConnectionManager:
         if cls._instance is None:
             try:
                 if REDIS_CFG["cluster_mode"]:
-                    # In cluster mode, connect to the host and port from REDIS_CFG
                     cls._instance = RedisCluster(
                         host=REDIS_CFG["host"],
                         port=REDIS_CFG["port"],
