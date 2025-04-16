@@ -4,7 +4,7 @@ import redis
 from redis import Redis
 from redis.cluster import RedisCluster
 from typing import Optional
-from common.config import REDIS_CFG, REDIS_CLUSTER_MODE
+from common.config import REDIS_CFG
 
 from common.config import generate_redis_uri
 
@@ -16,7 +16,7 @@ class RedisConnectionManager:
     def get_connection(cls, decode_responses=True) -> Redis:
         if cls._instance is None:
             try:
-                if REDIS_CLUSTER_MODE:
+                if REDIS_CFG["cluster_mode"]:
                     # In cluster mode, connect to the host and port from REDIS_CFG
                     cls._instance = RedisCluster(
                         host=REDIS_CFG["host"],

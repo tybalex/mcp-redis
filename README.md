@@ -124,7 +124,7 @@ You can configure Claude Desktop to use this MCP Server.
                 "REDIS_PSW": "<your_redis_database_password>",
                 "REDIS_SSL": True|False,
                 "REDIS_CA_PATH": "<your_redis_ca_path>",
-                "REDIS_CLUSTER_MODE": True|False
+                "REDIS_CLUSTER_MODE": True|False  # Set to True to enable Redis Cluster mode
             }
         }
     }
