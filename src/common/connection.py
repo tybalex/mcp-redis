@@ -2,7 +2,8 @@ import sys
 from version import __version__
 import redis
 from redis import Redis
-from typing import Optional
+from redis.cluster import RedisCluster
+from typing import Optional, Type, Union
 from common.config import REDIS_CFG
 
 from common.config import generate_redis_uri
@@ -15,7 +16,9 @@ class RedisConnectionManager:
     def get_connection(cls, decode_responses=True) -> Redis:
         if cls._instance is None:
             try:
-                cls._instance = redis.Redis(
+                redis_class: Type[Union[Redis, RedisCluster]] = redis.cluster.RedisCluster if REDIS_CFG["cluster_mode"] else redis.Redis
+                
+                cls._instance = redis_class(
                     host=REDIS_CFG["host"],
                     port=REDIS_CFG["port"],
                     username=REDIS_CFG["username"],
@@ -27,8 +30,8 @@ class RedisConnectionManager:
                     ssl_cert_reqs=REDIS_CFG["ssl_cert_reqs"],
                     ssl_ca_certs=REDIS_CFG["ssl_ca_certs"],
                     decode_responses=decode_responses,
-                    max_connections=10,
-                    lib_name=f"redis-py(mcp-server_v{__version__})"
+                    lib_name=f"redis-py(mcp-server_v{__version__})",
+                    **({"max_connections_per_node": 10} if REDIS_CFG["cluster_mode"] else {"max_connections": 10})
                 )
 
             except redis.exceptions.ConnectionError:
@@ -45,6 +48,9 @@ class RedisConnectionManager:
                 raise
             except redis.exceptions.RedisError as e:
                 print(f"Redis error: {e}", file=sys.stderr)
+                raise
+            except redis.exceptions.ClusterError as e:
+                print(f"Redis Cluster error: {e}", file=sys.stderr)
                 raise
             except Exception as e:
                 print(f"Unexpected error: {e}", file=sys.stderr)

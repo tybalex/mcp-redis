@@ -73,6 +73,7 @@ To configure this Redis MCP Server, consider the following environment variables
 | `REDIS_SSL_CERTFILE`    | Client's certificate file for client authentication       | None          |
 | `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | `"required"`  |
 | `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | None          |
+| `REDIS_CLUSTER_MODE`    | Enable Redis Cluster mode                                 | `False`       |
 
 ## Integration with OpenAI Agents SDK
 
@@ -122,7 +123,8 @@ You can configure Claude Desktop to use this MCP Server.
                 "REDIS_PORT": "<your_redis_database_port>",
                 "REDIS_PSW": "<your_redis_database_password>",
                 "REDIS_SSL": True|False,
-                "REDIS_CA_PATH": "<your_redis_ca_path>"
+                "REDIS_CA_PATH": "<your_redis_ca_path>",
+                "REDIS_CLUSTER_MODE": True|False
             }
         }
     }
