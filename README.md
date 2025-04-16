@@ -1,5 +1,10 @@
 # Redis MCP Server
 [![smithery badge](https://smithery.ai/badge/@redis/mcp-redis)](https://smithery.ai/server/@redis/mcp-redis)
+
+<a href="https://glama.ai/mcp/servers/@redis/mcp-redis">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@redis/mcp-redis/badge" alt="Redis Server MCP server" />
+</a>
+
 ## Overview
 The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis. Using this MCP Server, you can ask questions like:
 
@@ -33,7 +38,6 @@ Additional tools.
 - `query engine` tools to manage vector indexes and perform vector search
 - `server management` tool to retrieve information about the database
 
-
 ## Installation
 
 ### Installing via Smithery
@@ -55,7 +59,6 @@ uv venv
 source .venv/bin/activate
 uv sync
 ```
-
 
 ## Configuration
 
@@ -162,4 +165,3 @@ This project is licensed under the **MIT License**.
 
 ## Contact
 For questions or support, reach out via [GitHub Issues](https://github.com/redis/mcp-redis/issues).
-
