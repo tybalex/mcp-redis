@@ -32,7 +32,7 @@ async def lpop(name: str) -> str:
     try:
         r = RedisConnectionManager.get_connection()
         value = r.lpop(name)
-        return value.decode() if value else f"List '{name}' is empty or does not exist."
+        return value if value else f"List '{name}' is empty or does not exist."
     except RedisError as e:
         return f"Error popping value from list '{name}': {str(e)}"
 
@@ -42,7 +42,7 @@ async def rpop(name: str) -> str:
     try:
         r = RedisConnectionManager.get_connection()
         value = r.rpop(name)
-        return value.decode() if value else f"List '{name}' is empty or does not exist."
+        return value if value else f"List '{name}' is empty or does not exist."
     except RedisError as e:
         return f"Error popping value from list '{name}': {str(e)}"
 
@@ -52,7 +52,7 @@ async def lrange(name: str, start: int, stop: int) -> list:
     try:
         r = RedisConnectionManager.get_connection()
         values = r.lrange(name, start, stop)
-        return [v.decode() for v in values] if values else f"List '{name}' is empty or does not exist."
+        return [v for v in values] if values else f"List '{name}' is empty or does not exist."
     except RedisError as e:
         return f"Error retrieving values from list '{name}': {str(e)}"
 
