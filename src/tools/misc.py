@@ -34,7 +34,7 @@ async def type(key: str) -> Dict[str, Any]:
     """
     try:
         r = RedisConnectionManager.get_connection()
-        key_type = r.type(key).decode('utf-8')
+        key_type = r.type(key)
         info = {
             'key': key,
             'type': key_type,
