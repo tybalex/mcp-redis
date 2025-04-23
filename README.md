@@ -40,15 +40,8 @@ Additional tools.
 
 ## Installation
 
-### Installing via Smithery
+Follow these instructions to install the server.
 
-To install Redis MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@redis/mcp-redis):
-
-```bash
-npx -y @smithery/cli install @redis/mcp-redis --client claude
-```
-
-### Manual Installation
 ```sh
 # Clone the repository
 git clone https://github.com/redis/mcp-redis.git
@@ -103,6 +96,19 @@ python3.13 redis_assistant.py
 You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
 
 ## Integration with Claude Desktop
+
+### Via Smithery
+
+To install Redis MCP Server for Claude Desktop automatically via [Smithery](https://smithery.ai/server/@redis/mcp-redis):
+
+```bash
+npx -y @smithery/cli install @redis/mcp-redis --client claude
+```
+
+Follow the prompt and provide the details to configure the server. The procedure will create the proper configuration in the `claude_desktop_config.json` configuration file.
+
+### Manual configuration
+
 You can configure Claude Desktop to use this MCP Server.
 
 1. Specify your Redis credentials and TLS configuration
@@ -133,6 +139,38 @@ You can configure Claude Desktop to use this MCP Server.
     }
 }
 ```
+
+### Using with Docker
+
+The Redis MCP Server provides a Dockerfile. Build this server's image with:
+
+```commandline
+docker build -t mcp-redis .
+```
+
+Finally, configure Claude Desktop to create the container at start-up. Edit the `claude_desktop_config.json` and add:
+
+```commandline
+{
+  "mcpServers": {
+    "redis": {
+      "command": "docker",
+      "args": ["run",
+                "--rm",
+                "--name",
+                "redis-mcp-server",
+                "-i",
+                "-e", "REDIS_HOST=<redis_hostname>",
+                "-e", "REDIS_PORT=<redis_port>",
+                "-e", "REDIS_USERNAME=<redis_username>",
+                "-e", "REDIS_PWD=<redis_password>",
+                "mcp-redis"]
+    }
+  }
+}
+```
+
+### Troubleshooting
 
 You can troubleshoot problems by tailing the log file.
 
