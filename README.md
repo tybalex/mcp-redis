@@ -143,7 +143,9 @@ You can configure Claude Desktop to use this MCP Server.
 
 ### Using with Docker
 
-The Redis MCP Server provides a Dockerfile. Build this server's image with:
+You can use a dockerized deployment of this server. You can either build your own image or use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image.
+
+If you'd like to build your own image, the Redis MCP Server provides a Dockerfile. Build this server's image with:
 
 ```commandline
 docker build -t mcp-redis .
@@ -170,6 +172,8 @@ Finally, configure Claude Desktop to create the container at start-up. Edit the 
   }
 }
 ```
+
+To use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image, just replace your image name (`mcp-redis` in the example above) with `mcp/redis`.
 
 ### Troubleshooting
 
