@@ -131,7 +131,7 @@ You can configure Claude Desktop to use this MCP Server.
             "env": {
                 "REDIS_HOST": "<your_redis_database_hostname>",
                 "REDIS_PORT": "<your_redis_database_port>",
-                "REDIS_PSW": "<your_redis_database_password>",
+                "REDIS_PWD": "<your_redis_database_password>",
                 "REDIS_SSL": True|False,
                 "REDIS_CA_PATH": "<your_redis_ca_path>",
                 "REDIS_CLUSTER_MODE": True|False
