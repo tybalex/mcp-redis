@@ -195,9 +195,34 @@ To use the Redis MCP Server with VS Code, you need:
 }
 ```
 
-2. Add the Redis MCP Server configuration to your `settings.json`:
+2. Add the Redis MCP Server configuration to your `mcp.json` or `settings.json`:
 
 ```commandline
+// Example .vscode/mcp.json
+{
+  "servers": {
+    "redis": {
+      "type": "stdio",
+      "command": "<full_path_uv_command>",
+      "args": [
+        "--directory",
+        "<your_mcp_server_directory>",
+        "run",
+        "src/main.py"
+      ],
+      "env": {
+        "REDIS_HOST": "<your_redis_database_hostname>",
+        "REDIS_PORT": "<your_redis_database_port>",
+        "REDIS_USERNAME": "<your_redis_database_username>",
+        "REDIS_PWD": "<your_redis_database_password>",
+      }
+    }
+  }
+}
+```
+
+```commandline
+// Example settings.json
 {
   "mcp": {
     "servers": {
@@ -215,9 +240,6 @@ To use the Redis MCP Server with VS Code, you need:
           "REDIS_PORT": "<your_redis_database_port>",
           "REDIS_USERNAME": "<your_redis_database_username>",
           "REDIS_PWD": "<your_redis_database_password>",
-          "REDIS_SSL": True|False,
-          "REDIS_CA_PATH": "<your_redis_ca_path>",
-          "REDIS_CLUSTER_MODE": True|False
         }
       }
     }
