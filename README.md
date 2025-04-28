@@ -90,7 +90,7 @@ export OPENAI_API_KEY="<openai_token>"
 And run the [application](./examples/redis_assistant.py).
 
 ```commandline
-python3.13 redis_assistant.py 
+python3.13 redis_assistant.py
 ```
 
 You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
@@ -105,7 +105,7 @@ If you'd like to test the [Redis MCP Server](https://smithery.ai/server/@redis/m
 npx -y @smithery/cli install @redis/mcp-redis --client claude
 ```
 
-Follow the prompt and provide the details to configure the server and connect to Redis (e.g. using a Redis Cloud database). 
+Follow the prompt and provide the details to configure the server and connect to Redis (e.g. using a Redis Cloud database).
 The procedure will create the proper configuration in the `claude_desktop_config.json` configuration file.
 
 ### Manual configuration
@@ -114,7 +114,7 @@ You can configure Claude Desktop to use this MCP Server.
 
 1. Specify your Redis credentials and TLS configuration
 2. Retrieve your `uv` command full path (e.g. `which uv`)
-3. Edit the `claude_desktop_config.json` configuration file 
+3. Edit the `claude_desktop_config.json` configuration file
    - on a MacOS, at `~/Library/Application\ Support/Claude/`
 
 ```commandline
@@ -182,6 +182,73 @@ You can troubleshoot problems by tailing the log file.
 ```commandline
 tail -f ~/Library/Logs/Claude/mcp-server-redis.log
 ```
+
+## Integration with VS Code
+
+To use the Redis MCP Server with VS Code, you need:
+
+1. Enable the [agent mode](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode) tools. Add the following to your `settings.json`:
+
+```commandline
+{
+  "chat.agent.enabled": true
+}
+```
+
+2. Add the Redis MCP Server configuration to your `mcp.json` or `settings.json`:
+
+```commandline
+// Example .vscode/mcp.json
+{
+  "servers": {
+    "redis": {
+      "type": "stdio",
+      "command": "<full_path_uv_command>",
+      "args": [
+        "--directory",
+        "<your_mcp_server_directory>",
+        "run",
+        "src/main.py"
+      ],
+      "env": {
+        "REDIS_HOST": "<your_redis_database_hostname>",
+        "REDIS_PORT": "<your_redis_database_port>",
+        "REDIS_USERNAME": "<your_redis_database_username>",
+        "REDIS_PWD": "<your_redis_database_password>",
+      }
+    }
+  }
+}
+```
+
+```commandline
+// Example settings.json
+{
+  "mcp": {
+    "servers": {
+      "redis": {
+        "type": "stdio",
+        "command": "<full_path_uv_command>",
+        "args": [
+          "--directory",
+          "<your_mcp_server_directory>",
+          "run",
+          "src/main.py"
+        ],
+        "env": {
+          "REDIS_HOST": "<your_redis_database_hostname>",
+          "REDIS_PORT": "<your_redis_database_port>",
+          "REDIS_USERNAME": "<your_redis_database_username>",
+          "REDIS_PWD": "<your_redis_database_password>",
+        }
+      }
+    }
+  }
+}
+```
+
+For more information, see the [VS Code documentation](https://code.visualstudio.com/docs/copilot/chat/mcp-servers).
+
 
 ## Testing
 
