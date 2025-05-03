@@ -1,3 +1,4 @@
+import json
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
@@ -10,10 +11,13 @@ import numpy as np
 @mcp.tool() 
 async def get_indexes() -> str:
     """List of indexes in the Redis database
+
+    Returns:
+        str: A JSON string containing the list of indexes or an error message.
     """
     try:
         r = RedisConnectionManager.get_connection()
-        return r.execute_command("FT._LIST")
+        return json.dumps(r.execute_command("FT._LIST"))
     except RedisError as e:
         return f"Error retrieving indexes: {str(e)}"
 
