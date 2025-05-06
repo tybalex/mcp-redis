@@ -1,3 +1,4 @@
+import json
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
@@ -48,11 +49,18 @@ async def rpop(name: str) -> str:
 
 @mcp.tool()
 async def lrange(name: str, start: int, stop: int) -> list:
-    """Get elements from a Redis list within a specific range."""
+    """Get elements from a Redis list within a specific range.
+
+        Returns:
+        str: A JSON string containing the list of elements or an error message.
+    """
     try:
         r = RedisConnectionManager.get_connection()
         values = r.lrange(name, start, stop)
-        return [v for v in values] if values else f"List '{name}' is empty or does not exist."
+        if not values:
+            return f"List '{name}' is empty or does not exist."
+        else:
+            return json.dumps(values)
     except RedisError as e:
         return f"Error retrieving values from list '{name}': {str(e)}"
 
