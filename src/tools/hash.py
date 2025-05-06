@@ -1,3 +1,5 @@
+import sys
+
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
@@ -5,7 +7,7 @@ import numpy as np
 
 
 @mcp.tool()
-async def hset(name: str, key: str, value: str, expire_seconds: int = None) -> str:
+async def hset(name: str, key: str, value: str | int | float, expire_seconds: int = None) -> str:
     """Set a field in a hash stored at key with an optional expiration time.
 
     Args:
@@ -19,7 +21,7 @@ async def hset(name: str, key: str, value: str, expire_seconds: int = None) -> s
     """
     try:
         r = RedisConnectionManager.get_connection()
-        r.hset(name, key, value)
+        r.hset(name, key, str(value))
 
         if expire_seconds is not None:
             r.expire(name, expire_seconds)
