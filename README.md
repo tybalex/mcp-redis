@@ -1,5 +1,8 @@
 # Redis MCP Server
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![smithery badge](https://smithery.ai/badge/@redis/mcp-redis)](https://smithery.ai/server/@redis/mcp-redis)
+
 
 <a href="https://glama.ai/mcp/servers/@redis/mcp-redis">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@redis/mcp-redis/badge" alt="Redis Server MCP server" />
@@ -57,19 +60,58 @@ uv sync
 
 To configure this Redis MCP Server, consider the following environment variables:
 
-| Name                    | Description                                               | Default Value |
-|-------------------------|-----------------------------------------------------------|---------------|
-| `REDIS_HOST`            | Redis IP or hostname                                      | `"127.0.0.1"` |
-| `REDIS_PORT`            | Redis port                                                | `6379`        |
-| `REDIS_USERNAME`        | Default database username                                 | `"default"`   |
-| `REDIS_PWD`             | Default database password                                 | ""            |
-| `REDIS_SSL`             | Enables or disables SSL/TLS                               | `False`       |
-| `REDIS_CA_PATH`         | CA certificate for verifying server                       | None          |
-| `REDIS_SSL_KEYFILE`     | Client's private key file for client authentication       | None          |
-| `REDIS_SSL_CERTFILE`    | Client's certificate file for client authentication       | None          |
-| `REDIS_CERT_REQS`       | Whether the client should verify the server's certificate | `"required"`  |
-| `REDIS_CA_CERTS`        | Path to the trusted CA certificates file                  | None          |
-| `REDIS_CLUSTER_MODE`    | Enable Redis Cluster mode                                 | `False`       |
+| Name                 | Description                                               | Default Value |
+|----------------------|-----------------------------------------------------------|---------------|
+| `REDIS_HOST`         | Redis IP or hostname                                      | `"127.0.0.1"` |
+| `REDIS_PORT`         | Redis port                                                | `6379`        |
+| `REDIS_USERNAME`     | Default database username                                 | `"default"`   |
+| `REDIS_PWD`          | Default database password                                 | ""            |
+| `REDIS_SSL`          | Enables or disables SSL/TLS                               | `False`       |
+| `REDIS_CA_PATH`      | CA certificate for verifying server                       | None          |
+| `REDIS_SSL_KEYFILE`  | Client's private key file for client authentication       | None          |
+| `REDIS_SSL_CERTFILE` | Client's certificate file for client authentication       | None          |
+| `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"`  |
+| `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None          |
+| `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`       |
+| `MCP_TRANSPORT`      | Use the `stdio` or `sse` transport                        | `stdio`       |
+
+
+## Transports
+
+This MCP server can be configured to handle requests locally, running as a process and communicating with the MCP client via `stdin` and `stdout`.
+This is the default configuration. The `sse` transport is also configurable so the server is available over the network.
+Configure the `MCP_TRANSPORT` variable accordingly.
+
+```commandline
+export MCP_TRANSPORT="sse"
+```
+
+Then start the server.
+
+```commandline
+uv run src/main.py
+```
+
+Test the server:
+
+```commandline
+curl -i http://127.0.0.1:8000/sse
+HTTP/1.1 200 OK
+```
+
+Integrate with your favorite tool or client. The VS Code configuration for GitHub Copilot is:
+
+```commandline
+"mcp": {
+    "servers": {
+        "redis-mcp": {
+            "type": "sse",
+            "url": "http://127.0.0.1:8000/sse"
+        },
+    }
+},
+```
+
 
 ## Integration with OpenAI Agents SDK
 
