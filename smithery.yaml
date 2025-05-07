@@ -51,8 +51,8 @@ startCommand:
     # A JS function that produces the CLI command based on the given config to start the MCP on stdio.
     |-
     (config) => ({
-      command: 'python',
-      args: ['src/main.py'],
+      command: 'uv',
+      args: ['run', 'python', 'src/main.py'],
       env: {
         REDIS_HOST: config.redisHost,
         REDIS_PORT: String(config.redisPort),
