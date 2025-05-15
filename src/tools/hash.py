@@ -34,11 +34,11 @@ async def hset(name: str, key: str, value: str | int | float, expire_seconds: in
 @mcp.tool()
 async def hget(name: str, key: str) -> str:
     """Get the value of a field in a Redis hash.
-    
+
     Args:
         name: The Redis hash key.
         key: The field name inside the hash.
-    
+
     Returns:
         The field value or an error message.
     """
@@ -52,11 +52,11 @@ async def hget(name: str, key: str) -> str:
 @mcp.tool()
 async def hdel(name: str, key: str) -> str:
     """Delete a field from a Redis hash.
-    
+
     Args:
         name: The Redis hash key.
         key: The field name inside the hash.
-    
+
     Returns:
         A success message or an error message.
     """
@@ -70,10 +70,10 @@ async def hdel(name: str, key: str) -> str:
 @mcp.tool()
 async def hgetall(name: str) -> dict:
     """Get all fields and values from a Redis hash.
-    
+
     Args:
         name: The Redis hash key.
-    
+
     Returns:
         A dictionary of field-value pairs or an error message.
     """
@@ -87,11 +87,11 @@ async def hgetall(name: str) -> dict:
 @mcp.tool()
 async def hexists(name: str, key: str) -> bool:
     """Check if a field exists in a Redis hash.
-    
+
     Args:
         name: The Redis hash key.
         key: The field name inside the hash.
-    
+
     Returns:
         True if the field exists, False otherwise.
     """
@@ -151,4 +151,4 @@ async def get_vector_from_hash(name: str, vector_field: str = "vector"):
             return f"Field '{vector_field}' not found in hash '{name}'."
 
     except RedisError as e:
-        return f"Error retrieving vector from hash '{name}' with key '{key}': {str(e)}"
+        return f"Error retrieving vector field '{vector_field}' from hash '{name}': {str(e)}"
