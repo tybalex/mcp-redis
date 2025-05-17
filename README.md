@@ -2,11 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python Version](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/downloads/)
 [![smithery badge](https://smithery.ai/badge/@redis/mcp-redis)](https://smithery.ai/server/@redis/mcp-redis)
-
-
-<a href="https://glama.ai/mcp/servers/@redis/mcp-redis">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@redis/mcp-redis/badge" alt="Redis Server MCP server" />
-</a>
+[![Verified on MseeP](https://mseep.ai/badge.svg)](https://mseep.ai/app/70102150-efe0-4705-9f7d-87980109a279)
 
 ## Overview
 The Redis MCP Server is a **natural language interface** designed for agentic applications to efficiently manage and search data in Redis. It integrates seamlessly with **MCP (Model Content Protocol) clients**, enabling AI-driven workflows to interact with structured and unstructured data in Redis. Using this MCP Server, you can ask questions like:
@@ -314,6 +310,12 @@ npx @modelcontextprotocol/inspector uv run src/main.py
 
 ## License
 This project is licensed under the **MIT License**.
+
+## Badges
+
+<a href="https://glama.ai/mcp/servers/@redis/mcp-redis">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@redis/mcp-redis/badge" alt="Redis Server MCP server" />
+</a>
 
 ## Contact
 For questions or support, reach out via [GitHub Issues](https://github.com/redis/mcp-redis/issues).
