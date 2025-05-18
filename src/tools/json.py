@@ -1,9 +1,7 @@
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
-from typing import Any, Dict, List, Union
-
-JsonType = Union[str, int, float, bool, None, Dict[str, Any], List[Any]]
+from redis.commands.json._util import JsonType
 
 
 @mcp.tool()
