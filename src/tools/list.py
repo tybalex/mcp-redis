@@ -2,9 +2,10 @@ import json
 from common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
 from common.server import mcp
+from redis.typing import FieldT
 
 @mcp.tool()
-async def lpush(name: str, value: str, expire: int = None) -> str:
+async def lpush(name: str, value: FieldT, expire: int = None) -> str:
     """Push a value onto the left of a Redis list and optionally set an expiration time."""
     try:
         r = RedisConnectionManager.get_connection()
@@ -16,7 +17,7 @@ async def lpush(name: str, value: str, expire: int = None) -> str:
         return f"Error pushing value to list '{name}': {str(e)}"
 
 @mcp.tool()
-async def rpush(name: str, value: str, expire: int = None) -> str:
+async def rpush(name: str, value: FieldT, expire: int = None) -> str:
     """Push a value onto the right of a Redis list and optionally set an expiration time."""
     try:
         r = RedisConnectionManager.get_connection()
