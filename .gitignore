@@ -8,6 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+.env
+env/
+ENV/
+env.bak/
+venv.bak/
 
 # UV lock file
 uv.lock
