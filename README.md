@@ -73,6 +73,31 @@ To configure this Redis MCP Server, consider the following environment variables
 | `MCP_TRANSPORT`      | Use the `stdio` or `sse` transport                        | `stdio`      |
 
 
+There are several ways to set environment variables:
+
+1. **Using a `.env` File**:  
+  Place a `.env` file in your project directory with key-value pairs for each environment variable. Tools like `python-dotenv`, `pipenv`, and `uv` can automatically load these variables when running your application. This is a convenient and secure way to manage configuration, as it keeps sensitive data out of your shell history and version control (if `.env` is in `.gitignore`).
+
+For example, create a `.env` file with the following content from the `.env.example` file provided in the repository:
+
+  ```bash
+cp .env.example .env
+  ```
+
+
+  Then edit the `.env` file to set your Redis configuration:
+
+OR,
+
+2. **Setting Variables in the Shell**:  
+  You can export environment variables directly in your shell before running your application. For example:
+  ```sh
+  export REDIS_HOST=your_redis_host
+  export REDIS_PORT=6379
+  # Other variables will be set similarly...
+  ```
+  This method is useful for temporary overrides or quick testing.
+
 ## Transports
 
 This MCP server can be configured to handle requests locally, running as a process and communicating with the MCP client via `stdin` and `stdout`.
