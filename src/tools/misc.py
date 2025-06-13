@@ -98,30 +98,6 @@ async def rename(old_key: str, new_key: str) -> Dict[str, Any]:
 
 
 @mcp.tool()
-async def get_all_keys(pattern: str = "*") -> list:
-    """
-    Retrieve all keys matching a pattern from the Redis database using the KEYS command.
-    
-    Note: The KEYS command is blocking and can impact performance on large databases.
-    For production use with large datasets, consider using SCAN instead.
-
-    Args:
-        pattern: Pattern to match keys against (default is "*" for all keys).
-                Common patterns: "user:*", "cache:*", "*:123", etc.
-
-    Returns:
-        A list of keys matching the pattern or an error message.
-    """
-    try:
-        r = RedisConnectionManager.get_connection()
-        keys = r.keys(pattern)
-        # Convert bytes to strings if needed
-        return [key.decode('utf-8') if isinstance(key, bytes) else key for key in keys]
-    except RedisError as e:
-        return f"Error retrieving keys with pattern '{pattern}': {str(e)}"
-
-
-@mcp.tool()
 async def scan_keys(pattern: str = "*", count: int = 100, cursor: int = 0) -> dict:
     """
     Scan keys in the Redis database using the SCAN command (non-blocking, production-safe).
