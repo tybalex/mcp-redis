@@ -95,3 +95,92 @@ async def rename(old_key: str, new_key: str) -> Dict[str, Any]:
 
     except RedisError as e:
         return {"error": str(e)}
+
+
+@mcp.tool()
+async def scan_keys(pattern: str = "*", count: int = 100, cursor: int = 0) -> dict:
+    """
+    Scan keys in the Redis database using the SCAN command (non-blocking, production-safe).
+    
+    ⚠️  IMPORTANT: This returns PARTIAL results from one iteration. Use scan_all_keys() 
+    to get ALL matching keys, or call this function multiple times with the returned cursor
+    until cursor becomes 0.
+    
+    The SCAN command iterates through the keyspace in small chunks, making it safe to use
+    on large databases without blocking other operations.
+
+    Args:
+        pattern: Pattern to match keys against (default is "*" for all keys).
+                Common patterns: "user:*", "cache:*", "*:123", etc.
+        count: Hint for the number of keys to return per iteration (default 100).
+               Redis may return more or fewer keys than this hint.
+        cursor: The cursor position to start scanning from (0 to start from beginning).
+                To continue scanning, use the cursor value returned from previous call.
+
+    Returns:
+        A dictionary containing:
+        - 'cursor': Next cursor position (0 means scan is complete)
+        - 'keys': List of keys found in this iteration (PARTIAL RESULTS)
+        - 'total_scanned': Number of keys returned in this batch
+        - 'scan_complete': Boolean indicating if scan is finished
+        Or an error message if something goes wrong.
+        
+    Example usage:
+        First call: scan_keys("user:*") -> returns cursor=1234, keys=[...], scan_complete=False
+        Next call: scan_keys("user:*", cursor=1234) -> continues from where it left off
+        Final call: returns cursor=0, scan_complete=True when done
+    """
+    try:
+        r = RedisConnectionManager.get_connection()
+        cursor, keys = r.scan(cursor=cursor, match=pattern, count=count)
+        
+        # Convert bytes to strings if needed
+        decoded_keys = [key.decode('utf-8') if isinstance(key, bytes) else key for key in keys]
+        
+        return {
+            'cursor': cursor,
+            'keys': decoded_keys,
+            'total_scanned': len(decoded_keys),
+            'scan_complete': cursor == 0
+        }
+    except RedisError as e:
+        return f"Error scanning keys with pattern '{pattern}': {str(e)}"
+
+
+@mcp.tool()
+async def scan_all_keys(pattern: str = "*", batch_size: int = 100) -> list:
+    """
+    Scan and return ALL keys matching a pattern using multiple SCAN iterations.
+    
+    This function automatically handles the SCAN cursor iteration to collect all matching keys.
+    It's safer than KEYS * for large databases but will still collect all results in memory.
+    
+    ⚠️  WARNING: With very large datasets (millions of keys), this may consume significant memory.
+    For large-scale operations, consider using scan_keys() with manual iteration instead.
+
+    Args:
+        pattern: Pattern to match keys against (default is "*" for all keys).
+        batch_size: Number of keys to scan per iteration (default 100).
+
+    Returns:
+        A list of all keys matching the pattern or an error message.
+    """
+    try:
+        r = RedisConnectionManager.get_connection()
+        all_keys = []
+        cursor = 0
+        
+        while True:
+            cursor, keys = r.scan(cursor=cursor, match=pattern, count=batch_size)
+            
+            # Convert bytes to strings if needed and add to results
+            decoded_keys = [key.decode('utf-8') if isinstance(key, bytes) else key for key in keys]
+            all_keys.extend(decoded_keys)
+            
+            # Break when scan is complete (cursor returns to 0)
+            if cursor == 0:
+                break
+        
+        return all_keys
+    except RedisError as e:
+        return f"Error scanning all keys with pattern '{pattern}': {str(e)}"
