@@ -57,20 +57,22 @@ uv sync
 To configure this Redis MCP Server, consider the following environment variables:
 
 | Name                 | Description                                               | Default Value |
-|----------------------|-----------------------------------------------------------|--------------|
+|----------------------|-----------------------------------------------------------|---------------|
 | `REDIS_HOST`         | Redis IP or hostname                                      | `"127.0.0.1"` |
-| `REDIS_PORT`         | Redis port                                                | `6379`       |
-| `REDIS_DB`           | Database                                                  | 0            |
-| `REDIS_USERNAME`     | Default database username                                 | `"default"`  |
-| `REDIS_PWD`          | Default database password                                 | ""           |
-| `REDIS_SSL`          | Enables or disables SSL/TLS                               | `False`      |
-| `REDIS_CA_PATH`      | CA certificate for verifying server                       | None         |
-| `REDIS_SSL_KEYFILE`  | Client's private key file for client authentication       | None         |
-| `REDIS_SSL_CERTFILE` | Client's certificate file for client authentication       | None         |
-| `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"` |
-| `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None         |
-| `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`      |
-| `MCP_TRANSPORT`      | Use the `stdio` or `sse` transport                        | `stdio`      |
+| `REDIS_PORT`         | Redis port                                                | `6379`        |
+| `REDIS_DB`           | Database                                                  | 0             |
+| `REDIS_USERNAME`     | Default database username                                 | `"default"`   |
+| `REDIS_PWD`          | Default database password                                 | ""            |
+| `REDIS_SSL`          | Enables or disables SSL/TLS                               | `False`       |
+| `REDIS_CA_PATH`      | CA certificate for verifying server                       | None          |
+| `REDIS_SSL_KEYFILE`  | Client's private key file for client authentication       | None          |
+| `REDIS_SSL_CERTFILE` | Client's certificate file for client authentication       | None          |
+| `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"`  |
+| `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None          |
+| `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`       |
+| `MCP_TRANSPORT`      | Use the `stdio`, `streamable-http` or `sse` transport     | `stdio`       |
+| `MCP_HOST`           | Server host when `streamable-http` or `sse` are set       | `127.0.0.1`   |
+| `MCP_PORT`           | Server port when `streamable-http` or `sse` are set       | `8000`        |
 
 
 There are several ways to set environment variables:
@@ -101,8 +103,37 @@ OR,
 ## Transports
 
 This MCP server can be configured to handle requests locally, running as a process and communicating with the MCP client via `stdin` and `stdout`.
-This is the default configuration. The `sse` transport is also configurable so the server is available over the network.
+This is the default configuration, `stdio`. The `streamable-http` and `sse` (deprecated) transports are also configurable, which make the server available over the network.
 Configure the `MCP_TRANSPORT` variable accordingly.
+
+> Authentication has not yet been implemented, and [attackers could use DNS rebinding](https://modelcontextprotocol.io/docs/concepts/transports#security-considerations) to access the server.
+
+### Streamable HTTP
+
+```commandline
+export MCP_TRANSPORT="streamable-http"
+```
+
+Then start the server.
+
+```commandline
+uv run src/main.py
+```
+
+Configure in GitHub Copilot
+
+```commandline
+"mcp": {
+    "servers": {
+        "redis-mcp": {
+            "type": "http",
+            "url": "http://127.0.0.1:8000/mcp/"
+        },
+    }
+},
+```
+
+### SSE (deprecated)
 
 ```commandline
 export MCP_TRANSPORT="sse"

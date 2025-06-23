@@ -18,7 +18,7 @@ from common.config import MCP_TRANSPORT
 
 class RedisMCPServer:
     def __init__(self):
-        print("Starting the RedisMCPServer", file=sys.stderr)
+        print("Starting the Redis MCP Server", file=sys.stderr)
 
     def run(self):
         mcp.run(transport=MCP_TRANSPORT)
