@@ -1,24 +1,10 @@
 import sys
-import ssl
 from src.version import __version__
 import redis
 from redis import Redis
 from redis.cluster import RedisCluster
 from typing import Optional, Type, Union
 from src.common.config import REDIS_CFG
-
-
-def _get_ssl_cert_reqs(cert_reqs_str: str):
-    """Convert string SSL certificate requirements to SSL constants."""
-    if cert_reqs_str == 'required':
-        return ssl.CERT_REQUIRED
-    elif cert_reqs_str == 'optional':
-        return ssl.CERT_OPTIONAL
-    elif cert_reqs_str == 'none':
-        return ssl.CERT_NONE
-    else:
-        # Default to required for safety
-        return ssl.CERT_REQUIRED
 
 
 class RedisConnectionManager:
@@ -39,7 +25,7 @@ class RedisConnectionManager:
                         "ssl_ca_path": REDIS_CFG["ssl_ca_path"],
                         "ssl_keyfile": REDIS_CFG["ssl_keyfile"],
                         "ssl_certfile": REDIS_CFG["ssl_certfile"],
-                        "ssl_cert_reqs": _get_ssl_cert_reqs(REDIS_CFG["ssl_cert_reqs"]),
+                        "ssl_cert_reqs": REDIS_CFG["ssl_cert_reqs"],
                         "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
                         "decode_responses": decode_responses,
                         "lib_name": f"redis-py(mcp-server_v{__version__})",
@@ -58,7 +44,7 @@ class RedisConnectionManager:
                         "ssl_ca_path": REDIS_CFG["ssl_ca_path"],
                         "ssl_keyfile": REDIS_CFG["ssl_keyfile"],
                         "ssl_certfile": REDIS_CFG["ssl_certfile"],
-                        "ssl_cert_reqs": _get_ssl_cert_reqs(REDIS_CFG["ssl_cert_reqs"]),
+                        "ssl_cert_reqs": REDIS_CFG["ssl_cert_reqs"],
                         "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
                         "decode_responses": decode_responses,
                         "lib_name": f"redis-py(mcp-server_v{__version__})",
