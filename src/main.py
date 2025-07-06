@@ -78,7 +78,7 @@ def cli(url, host, port, db, username, password,
 
         set_redis_config_from_cli(config)
 
-    # RedisConnectionManager.get_connection().ping()
+    RedisConnectionManager.get_connection().ping()
 
     # Start the server
     server = RedisMCPServer()

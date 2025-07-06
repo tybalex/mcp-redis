@@ -85,6 +85,15 @@ def parse_redis_uri(uri: str) -> dict:
 
 def set_redis_config_from_cli(config: dict):
     for key, value in config.items():
-        if isinstance(value, bool):
-            value = 'true' if value else 'false'
-        REDIS_CFG[key] = str(value)
+        if key in ['port', 'db']:
+            # Keep port and db as integers
+            REDIS_CFG[key] = int(value)
+        elif key == 'ssl' or key == 'cluster_mode':
+            # Keep ssl and cluster_mode as booleans
+            REDIS_CFG[key] = bool(value)
+        elif isinstance(value, bool):
+            # Convert other booleans to strings for environment compatibility
+            REDIS_CFG[key] = 'true' if value else 'false'
+        else:
+            # Convert other values to strings
+            REDIS_CFG[key] = str(value) if value is not None else None
