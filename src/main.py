@@ -59,6 +59,29 @@ def parse_redis_uri(uri: str) -> dict:
     if parsed.password:
         config['password'] = parsed.password
 
+    # Parse query parameters for SSL and other options
+    if parsed.query:
+        query_params = urllib.parse.parse_qs(parsed.query)
+
+        # Handle SSL parameters
+        if 'ssl_cert_reqs' in query_params:
+            config['ssl_cert_reqs'] = query_params['ssl_cert_reqs'][0]
+        if 'ssl_ca_certs' in query_params:
+            config['ssl_ca_certs'] = query_params['ssl_ca_certs'][0]
+        if 'ssl_ca_path' in query_params:
+            config['ssl_ca_path'] = query_params['ssl_ca_path'][0]
+        if 'ssl_keyfile' in query_params:
+            config['ssl_keyfile'] = query_params['ssl_keyfile'][0]
+        if 'ssl_certfile' in query_params:
+            config['ssl_certfile'] = query_params['ssl_certfile'][0]
+
+        # Handle other parameters
+        if 'db' in query_params:
+            try:
+                config['db'] = int(query_params['db'][0])
+            except ValueError:
+                pass
+
     return config
 
 
