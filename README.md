@@ -41,20 +41,20 @@ Additional tools.
 
 ### Quick Start with uvx (Recommended)
 
-The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly without installation:
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub without installation:
 
 ```sh
 # Run with Redis URI
-uvx redis-mcp-server --redis-uri redis://localhost:6379/0
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --url redis://localhost:6379/0
 
 # Run with individual parameters
-uvx redis-mcp-server --redis-host localhost --redis-port 6379 --redis-password mypassword
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --host localhost --port 6379 --password mypassword
 
 # Run with SSL
-uvx redis-mcp-server --redis-uri rediss://user:pass@redis.example.com:6380/0
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --url rediss://user:pass@redis.example.com:6380/0
 
 # See all options
-uvx redis-mcp-server --help
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --help
 ```
 
 ### Development Installation
@@ -71,31 +71,60 @@ uv venv
 source .venv/bin/activate
 uv sync
 
-# Run locally during development
+# Run with CLI interface (recommended)
 uv run redis-mcp-server --help
-```
 
-### Publishing to PyPI
-
-To publish the package to PyPI for global `uvx` usage:
-
-```sh
-# Build the package
-uv build
-
-# Publish to PyPI (requires PyPI credentials)
-uv publish
-```
-
-Once published, users can run it globally with:
-
-```sh
-uvx redis-mcp-server --redis-uri redis://localhost:6379/0
+# Or run the main file directly (uses environment variables)
+uv run src/main.py
 ```
 
 ## Configuration
 
-To configure this Redis MCP Server, consider the following environment variables:
+The Redis MCP Server can be configured in two ways: via command line arguments (recommended) or environment variables.
+
+### Configuration via Command Line (Recommended)
+
+When using the CLI interface, you can configure the server with command line arguments:
+
+```sh
+# Basic Redis connection
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
+  --host localhost \
+  --port 6379 \
+  --password mypassword
+
+# Using Redis URI (simpler)
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
+  --url redis://user:pass@localhost:6379/0
+
+# SSL connection
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
+  --url rediss://user:pass@redis.example.com:6380/0 \
+  --ssl-ca-path /path/to/ca.pem
+
+# See all available options
+uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --help
+```
+
+**Available CLI Options:**
+- `--url` - Redis connection URI (redis://user:pass@host:port/db)
+- `--host` - Redis hostname (default: 127.0.0.1)
+- `--port` - Redis port (default: 6379)
+- `--db` - Redis database number (default: 0)
+- `--username` - Redis username
+- `--password` - Redis password
+- `--ssl` - Enable SSL connection
+- `--ssl-ca-path` - Path to CA certificate file
+- `--ssl-keyfile` - Path to SSL key file
+- `--ssl-certfile` - Path to SSL certificate file
+- `--cluster-mode` - Enable Redis cluster mode
+- `--mcp-transport` - MCP transport method (stdio, streamable-http, sse)
+- `--mcp-host` - MCP server host (default: 127.0.0.1)
+- `--mcp-port` - MCP server port (default: 8000)
+
+### Configuration via Environment Variables
+
+When running the server directly (`uv run src/main.py`) or for legacy compatibility, you can use environment variables:
 
 | Name                 | Description                                               | Default Value |
 |----------------------|-----------------------------------------------------------|---------------|
@@ -248,7 +277,7 @@ Add this to your `claude_desktop_config.json`:
       "command": "uvx",
       "args": [
         "redis-mcp-server",
-        "--redis-uri", "redis://localhost:6379/0"
+        "--url", "redis://localhost:6379/0"
       ]
     }
   }
@@ -264,9 +293,9 @@ Or with individual parameters:
       "command": "uvx",
       "args": [
         "redis-mcp-server",
-        "--redis-host", "your-redis-host",
-        "--redis-port", "6379",
-        "--redis-password", "your-password"
+        "--host", "your-redis-host",
+        "--port", "6379",
+        "--password", "your-password"
       ]
     }
   }
@@ -285,7 +314,7 @@ Add this to your `.vscode/mcp.json`:
       "command": "uvx",
       "args": [
         "redis-mcp-server",
-        "--redis-uri", "redis://localhost:6379/0"
+        "--url", "redis://localhost:6379/0"
       ]
     }
   }

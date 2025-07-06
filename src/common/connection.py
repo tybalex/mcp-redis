@@ -6,8 +6,6 @@ from redis.cluster import RedisCluster
 from typing import Optional, Type, Union
 from src.common.config import REDIS_CFG
 
-from src.common.config import generate_redis_uri
-
 
 class RedisConnectionManager:
     _instance: Optional[Redis] = None

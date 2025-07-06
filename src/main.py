@@ -88,32 +88,32 @@ def set_redis_env_from_config(config: dict):
 
 
 @click.command()
-@click.option('--redis-uri', help='Redis connection URI (redis://user:pass@host:port/db or rediss:// for SSL)')
-@click.option('--redis-host', default='127.0.0.1', help='Redis host')
-@click.option('--redis-port', default=6379, type=int, help='Redis port')
-@click.option('--redis-db', default=0, type=int, help='Redis database number')
-@click.option('--redis-username', help='Redis username')
-@click.option('--redis-password', help='Redis password')
-@click.option('--redis-ssl', is_flag=True, help='Use SSL connection')
-@click.option('--redis-ssl-ca-path', help='Path to CA certificate file')
-@click.option('--redis-ssl-keyfile', help='Path to SSL key file')
-@click.option('--redis-ssl-certfile', help='Path to SSL certificate file')
-@click.option('--redis-ssl-cert-reqs', default='required', help='SSL certificate requirements')
-@click.option('--redis-ssl-ca-certs', help='Path to CA certificates file')
-@click.option('--redis-cluster-mode', is_flag=True, help='Enable Redis cluster mode')
+@click.option('--url', help='Redis connection URI (redis://user:pass@host:port/db or rediss:// for SSL)')
+@click.option('--host', default='127.0.0.1', help='Redis host')
+@click.option('--port', default=6379, type=int, help='Redis port')
+@click.option('--db', default=0, type=int, help='Redis database number')
+@click.option('--username', help='Redis username')
+@click.option('--password', help='Redis password')
+@click.option('--ssl', is_flag=True, help='Use SSL connection')
+@click.option('--ssl-ca-path', help='Path to CA certificate file')
+@click.option('--ssl-keyfile', help='Path to SSL key file')
+@click.option('--ssl-certfile', help='Path to SSL certificate file')
+@click.option('--ssl-cert-reqs', default='required', help='SSL certificate requirements')
+@click.option('--ssl-ca-certs', help='Path to CA certificates file')
+@click.option('--cluster-mode', is_flag=True, help='Enable Redis cluster mode')
 @click.option('--mcp-transport', default='stdio', type=click.Choice(['stdio', 'streamable-http', 'sse']), help='MCP transport method')
 @click.option('--mcp-host', default='127.0.0.1', help='MCP server host (for http/sse transport)')
 @click.option('--mcp-port', default=8000, type=int, help='MCP server port (for http/sse transport)')
-def cli(redis_uri, redis_host, redis_port, redis_db, redis_username, redis_password,
-        redis_ssl, redis_ssl_ca_path, redis_ssl_keyfile, redis_ssl_certfile,
-        redis_ssl_cert_reqs, redis_ssl_ca_certs, redis_cluster_mode,
+def cli(url, host, port, db, username, password,
+        ssl, ssl_ca_path, ssl_keyfile, ssl_certfile,
+        ssl_cert_reqs, ssl_ca_certs, cluster_mode,
         mcp_transport, mcp_host, mcp_port):
     """Redis MCP Server - Model Context Protocol server for Redis."""
 
     # Handle Redis URI if provided
-    if redis_uri:
+    if url:
         try:
-            uri_config = parse_redis_uri(redis_uri)
+            uri_config = parse_redis_uri(url)
             set_redis_env_from_config(uri_config)
         except ValueError as e:
             click.echo(f"Error parsing Redis URI: {e}", err=True)
@@ -121,27 +121,27 @@ def cli(redis_uri, redis_host, redis_port, redis_db, redis_username, redis_passw
     else:
         # Set individual Redis parameters
         config = {
-            'host': redis_host,
-            'port': redis_port,
-            'db': redis_db,
-            'ssl': redis_ssl,
-            'cluster_mode': redis_cluster_mode
+            'host': host,
+            'port': port,
+            'db': db,
+            'ssl': ssl,
+            'cluster_mode': cluster_mode
         }
 
-        if redis_username:
-            config['username'] = redis_username
-        if redis_password:
-            config['password'] = redis_password
-        if redis_ssl_ca_path:
-            config['ssl_ca_path'] = redis_ssl_ca_path
-        if redis_ssl_keyfile:
-            config['ssl_keyfile'] = redis_ssl_keyfile
-        if redis_ssl_certfile:
-            config['ssl_certfile'] = redis_ssl_certfile
-        if redis_ssl_cert_reqs:
-            config['ssl_cert_reqs'] = redis_ssl_cert_reqs
-        if redis_ssl_ca_certs:
-            config['ssl_ca_certs'] = redis_ssl_ca_certs
+        if username:
+            config['username'] = username
+        if password:
+            config['password'] = password
+        if ssl_ca_path:
+            config['ssl_ca_path'] = ssl_ca_path
+        if ssl_keyfile:
+            config['ssl_keyfile'] = ssl_keyfile
+        if ssl_certfile:
+            config['ssl_certfile'] = ssl_certfile
+        if ssl_cert_reqs:
+            config['ssl_cert_reqs'] = ssl_cert_reqs
+        if ssl_ca_certs:
+            config['ssl_ca_certs'] = ssl_ca_certs
 
         set_redis_env_from_config(config)
 
