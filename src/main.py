@@ -15,7 +15,7 @@ import src.tools.sorted_set
 import src.tools.set
 import src.tools.stream
 import src.tools.pub_sub
-from src.common.config import MCP_TRANSPORT, parse_redis_uri, set_redis_env_from_config
+from src.common.config import MCP_TRANSPORT, parse_redis_uri, set_redis_env_from_config, reload_redis_config
 
 
 class RedisMCPServer:
@@ -83,6 +83,9 @@ def cli(url, host, port, db, username, password,
             config['ssl_ca_certs'] = ssl_ca_certs
 
         set_redis_env_from_config(config)
+
+    # Reload Redis configuration to pick up the new environment variables
+    reload_redis_config()
 
     # Set MCP transport settings
     os.environ['MCP_TRANSPORT'] = mcp_transport
