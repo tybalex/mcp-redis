@@ -1,10 +1,24 @@
 import sys
+import ssl
 from src.version import __version__
 import redis
 from redis import Redis
 from redis.cluster import RedisCluster
 from typing import Optional, Type, Union
 from src.common.config import REDIS_CFG
+
+
+def _get_ssl_cert_reqs(cert_reqs_str: str):
+    """Convert string SSL certificate requirements to SSL constants."""
+    if cert_reqs_str == 'required':
+        return ssl.CERT_REQUIRED
+    elif cert_reqs_str == 'optional':
+        return ssl.CERT_OPTIONAL
+    elif cert_reqs_str == 'none':
+        return ssl.CERT_NONE
+    else:
+        # Default to required for safety
+        return ssl.CERT_REQUIRED
 
 
 class RedisConnectionManager:
@@ -22,15 +36,22 @@ class RedisConnectionManager:
                         "username": REDIS_CFG["username"],
                         "password": REDIS_CFG["password"],
                         "ssl": REDIS_CFG["ssl"],
-                        "ssl_ca_path": REDIS_CFG["ssl_ca_path"],
-                        "ssl_keyfile": REDIS_CFG["ssl_keyfile"],
-                        "ssl_certfile": REDIS_CFG["ssl_certfile"],
-                        "ssl_cert_reqs": REDIS_CFG["ssl_cert_reqs"],
-                        "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
                         "decode_responses": decode_responses,
                         "lib_name": f"redis-py(mcp-server_v{__version__})",
-                        "max_connections_per_node": 10 
+                        "max_connections_per_node": 10
                     }
+
+                    # Add SSL parameters only if they are not None
+                    if REDIS_CFG["ssl_ca_path"]:
+                        connection_params["ssl_ca_path"] = REDIS_CFG["ssl_ca_path"]
+                    if REDIS_CFG["ssl_keyfile"]:
+                        connection_params["ssl_keyfile"] = REDIS_CFG["ssl_keyfile"]
+                    if REDIS_CFG["ssl_certfile"]:
+                        connection_params["ssl_certfile"] = REDIS_CFG["ssl_certfile"]
+                    if REDIS_CFG["ssl_ca_certs"]:
+                        connection_params["ssl_ca_certs"] = REDIS_CFG["ssl_ca_certs"]
+                    if REDIS_CFG["ssl_cert_reqs"]:
+                        connection_params["ssl_cert_reqs"] = _get_ssl_cert_reqs(REDIS_CFG["ssl_cert_reqs"])
                 else:
                     redis_class: Type[Union[Redis, RedisCluster]] = redis.Redis
                     connection_params = {
@@ -40,15 +61,22 @@ class RedisConnectionManager:
                         "username": REDIS_CFG["username"],
                         "password": REDIS_CFG["password"],
                         "ssl": REDIS_CFG["ssl"],
-                        "ssl_ca_path": REDIS_CFG["ssl_ca_path"],
-                        "ssl_keyfile": REDIS_CFG["ssl_keyfile"],
-                        "ssl_certfile": REDIS_CFG["ssl_certfile"],
-                        "ssl_cert_reqs": REDIS_CFG["ssl_cert_reqs"],
-                        "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
                         "decode_responses": decode_responses,
                         "lib_name": f"redis-py(mcp-server_v{__version__})",
                         "max_connections": 10
                     }
+
+                    # Add SSL parameters only if they are not None
+                    if REDIS_CFG["ssl_ca_path"]:
+                        connection_params["ssl_ca_path"] = REDIS_CFG["ssl_ca_path"]
+                    if REDIS_CFG["ssl_keyfile"]:
+                        connection_params["ssl_keyfile"] = REDIS_CFG["ssl_keyfile"]
+                    if REDIS_CFG["ssl_certfile"]:
+                        connection_params["ssl_certfile"] = REDIS_CFG["ssl_certfile"]
+                    if REDIS_CFG["ssl_ca_certs"]:
+                        connection_params["ssl_ca_certs"] = REDIS_CFG["ssl_ca_certs"]
+                    if REDIS_CFG["ssl_cert_reqs"]:
+                        connection_params["ssl_cert_reqs"] = _get_ssl_cert_reqs(REDIS_CFG["ssl_cert_reqs"])
                 
                 cls._instance = redis_class(**connection_params)
 
