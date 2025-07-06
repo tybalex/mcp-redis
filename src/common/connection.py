@@ -32,7 +32,6 @@ class RedisConnectionManager:
                         "max_connections_per_node": 10 
                     }
                 else:
-                    print("Redis config:", REDIS_CFG, file=sys.stderr)
                     redis_class: Type[Union[Redis, RedisCluster]] = redis.Redis
                     connection_params = {
                         "host": REDIS_CFG["host"],

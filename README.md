@@ -118,9 +118,6 @@ uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support re
 - `--ssl-keyfile` - Path to SSL key file
 - `--ssl-certfile` - Path to SSL certificate file
 - `--cluster-mode` - Enable Redis cluster mode
-- `--mcp-transport` - MCP transport method (stdio, streamable-http, sse)
-- `--mcp-host` - MCP server host (default: 127.0.0.1)
-- `--mcp-port` - MCP server port (default: 8000)
 
 ### Configuration via Environment Variables
 
@@ -140,9 +137,7 @@ When running the server directly (`uv run src/main.py`) or for legacy compatibil
 | `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"`  |
 | `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None          |
 | `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`       |
-| `MCP_TRANSPORT`      | Use the `stdio`, `streamable-http` or `sse` transport     | `stdio`       |
-| `MCP_HOST`           | Server host when `streamable-http` or `sse` are set       | `127.0.0.1`   |
-| `MCP_PORT`           | Server port when `streamable-http` or `sse` are set       | `8000`        |
+
 
 
 There are several ways to set environment variables:
@@ -169,71 +164,6 @@ OR,
   # Other variables will be set similarly...
   ```
   This method is useful for temporary overrides or quick testing.
-
-## Transports
-
-This MCP server can be configured to handle requests locally, running as a process and communicating with the MCP client via `stdin` and `stdout`.
-This is the default configuration, `stdio`. The `streamable-http` and `sse` (deprecated) transports are also configurable, which make the server available over the network.
-Configure the `MCP_TRANSPORT` variable accordingly.
-
-> Authentication has not yet been implemented, and [attackers could use DNS rebinding](https://modelcontextprotocol.io/docs/concepts/transports#security-considerations) to access the server.
-
-### Streamable HTTP
-
-```commandline
-export MCP_TRANSPORT="streamable-http"
-```
-
-Then start the server.
-
-```commandline
-uv run src/main.py
-```
-
-Configure in GitHub Copilot
-
-```commandline
-"mcp": {
-    "servers": {
-        "redis-mcp": {
-            "type": "http",
-            "url": "http://127.0.0.1:8000/mcp/"
-        },
-    }
-},
-```
-
-### SSE (deprecated)
-
-```commandline
-export MCP_TRANSPORT="sse"
-```
-
-Then start the server.
-
-```commandline
-uv run src/main.py
-```
-
-Test the server:
-
-```commandline
-curl -i http://127.0.0.1:8000/sse
-HTTP/1.1 200 OK
-```
-
-Integrate with your favorite tool or client. The VS Code configuration for GitHub Copilot is:
-
-```commandline
-"mcp": {
-    "servers": {
-        "redis-mcp": {
-            "type": "sse",
-            "url": "http://127.0.0.1:8000/sse"
-        },
-    }
-},
-```
 
 
 ## Integration with OpenAI Agents SDK

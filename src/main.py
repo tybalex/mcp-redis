@@ -1,24 +1,19 @@
 import sys
-import os
 import click
-
+from src.common.connection import RedisConnectionManager
 from src.common.server import mcp
-from src.common.config import MCP_TRANSPORT, parse_redis_uri, set_redis_env_from_config, reload_redis_config
-
-
-def _import_tools():
-    """Import all tool modules after configuration is set up."""
-    import src.tools.server_management
-    import src.tools.misc
-    import src.tools.redis_query_engine
-    import src.tools.hash
-    import src.tools.list
-    import src.tools.string
-    import src.tools.json
-    import src.tools.sorted_set
-    import src.tools.set
-    import src.tools.stream
-    import src.tools.pub_sub
+from src.common.config import parse_redis_uri, set_redis_config_from_cli
+import src.tools.server_management
+import src.tools.misc
+import src.tools.redis_query_engine
+import src.tools.hash
+import src.tools.list
+import src.tools.string
+import src.tools.json
+import src.tools.sorted_set
+import src.tools.set
+import src.tools.stream
+import src.tools.pub_sub
 
 
 class RedisMCPServer:
@@ -26,7 +21,7 @@ class RedisMCPServer:
         print("Starting the Redis MCP Server", file=sys.stderr)
 
     def run(self):
-        mcp.run(transport=MCP_TRANSPORT)
+        mcp.run()
 
 
 @click.command()
@@ -43,20 +38,16 @@ class RedisMCPServer:
 @click.option('--ssl-cert-reqs', default='required', help='SSL certificate requirements')
 @click.option('--ssl-ca-certs', help='Path to CA certificates file')
 @click.option('--cluster-mode', is_flag=True, help='Enable Redis cluster mode')
-@click.option('--mcp-transport', default='stdio', type=click.Choice(['stdio', 'streamable-http', 'sse']), help='MCP transport method')
-@click.option('--mcp-host', default='127.0.0.1', help='MCP server host (for http/sse transport)')
-@click.option('--mcp-port', default=8000, type=int, help='MCP server port (for http/sse transport)')
 def cli(url, host, port, db, username, password,
         ssl, ssl_ca_path, ssl_keyfile, ssl_certfile,
-        ssl_cert_reqs, ssl_ca_certs, cluster_mode,
-        mcp_transport, mcp_host, mcp_port):
+        ssl_cert_reqs, ssl_ca_certs, cluster_mode):
     """Redis MCP Server - Model Context Protocol server for Redis."""
 
     # Handle Redis URI if provided
     if url:
         try:
             uri_config = parse_redis_uri(url)
-            set_redis_env_from_config(uri_config)
+            set_redis_config_from_cli(uri_config)
         except ValueError as e:
             click.echo(f"Error parsing Redis URI: {e}", err=True)
             sys.exit(1)
@@ -85,18 +76,9 @@ def cli(url, host, port, db, username, password,
         if ssl_ca_certs:
             config['ssl_ca_certs'] = ssl_ca_certs
 
-        set_redis_env_from_config(config)
+        set_redis_config_from_cli(config)
 
-    # Reload Redis configuration to pick up the new environment variables
-    reload_redis_config()
-
-    # Import tools after configuration is set up (ensures Redis connection uses new config)
-    _import_tools()
-
-    # Set MCP transport settings
-    os.environ['MCP_TRANSPORT'] = mcp_transport
-    os.environ['MCP_HOST'] = mcp_host
-    os.environ['MCP_PORT'] = str(mcp_port)
+    # RedisConnectionManager.get_connection().ping()
 
     # Start the server
     server = RedisMCPServer()
@@ -105,8 +87,6 @@ def cli(url, host, port, db, username, password,
 
 def main():
     """Legacy main function for backward compatibility."""
-    # Import tools (uses default environment variables)
-    _import_tools()
     server = RedisMCPServer()
     server.run()
 
