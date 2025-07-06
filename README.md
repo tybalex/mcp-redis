@@ -39,7 +39,27 @@ Additional tools.
 
 ## Installation
 
-Follow these instructions to install the server.
+### Quick Start with uvx (Recommended)
+
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly without installation:
+
+```sh
+# Run with Redis URI
+uvx redis-mcp-server --redis-uri redis://localhost:6379/0
+
+# Run with individual parameters
+uvx redis-mcp-server --redis-host localhost --redis-port 6379 --redis-password mypassword
+
+# Run with SSL
+uvx redis-mcp-server --redis-uri rediss://user:pass@redis.example.com:6380/0
+
+# See all options
+uvx redis-mcp-server --help
+```
+
+### Development Installation
+
+For development or if you prefer to clone the repository:
 
 ```sh
 # Clone the repository
@@ -50,6 +70,27 @@ cd mcp-redis
 uv venv
 source .venv/bin/activate
 uv sync
+
+# Run locally during development
+uv run redis-mcp-server --help
+```
+
+### Publishing to PyPI
+
+To publish the package to PyPI for global `uvx` usage:
+
+```sh
+# Build the package
+uv build
+
+# Publish to PyPI (requires PyPI credentials)
+uv publish
+```
+
+Once published, users can run it globally with:
+
+```sh
+uvx redis-mcp-server --redis-uri redis://localhost:6379/0
 ```
 
 ## Configuration
@@ -189,6 +230,67 @@ python3.13 redis_assistant.py
 ```
 
 You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
+
+## Integration with MCP Clients
+
+### Using uvx (Recommended)
+
+The simplest way to configure MCP clients is using `uvx`. Here are examples for popular clients:
+
+#### Claude Desktop
+
+Add this to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "redis": {
+      "command": "uvx",
+      "args": [
+        "redis-mcp-server",
+        "--redis-uri", "redis://localhost:6379/0"
+      ]
+    }
+  }
+}
+```
+
+Or with individual parameters:
+
+```json
+{
+  "mcpServers": {
+    "redis": {
+      "command": "uvx",
+      "args": [
+        "redis-mcp-server",
+        "--redis-host", "your-redis-host",
+        "--redis-port", "6379",
+        "--redis-password", "your-password"
+      ]
+    }
+  }
+}
+```
+
+#### VS Code with GitHub Copilot
+
+Add this to your `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "redis": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": [
+        "redis-mcp-server",
+        "--redis-uri", "redis://localhost:6379/0"
+      ]
+    }
+  }
+}
+```
 
 ## Integration with Claude Desktop
 
