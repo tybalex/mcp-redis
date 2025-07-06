@@ -12,6 +12,29 @@ The Redis MCP Server is a **natural language interface** designed for agentic ap
 - "Store the session with an expiration time"
 - "Index and search this vector"
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tools](#tools)
+- [Installation](#installation)
+  - [Quick Start with uvx (Recommended)](#quick-start-with-uvx-recommended)
+  - [Development Installation](#development-installation)
+- [Configuration](#configuration)
+  - [Configuration via Command Line (Recommended)](#configuration-via-command-line-recommended)
+  - [Configuration via Environment Variables](#configuration-via-environment-variables)
+- [Integration with OpenAI Agents SDK](#integration-with-openai-agents-sdk)
+- [Integration with MCP Clients](#integration-with-mcp-clients)
+  - [Using uvx (Recommended)](#using-uvx-recommended)
+  - [With Docker](#with-docker)
+  - [Claude Desktop](#claude-desktop)
+  - [VS Code with GitHub Copilot](#vs-code-with-github-copilot)
+  - [Augment](#augment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Badges](#badges)
+- [Contact](#contact)
+
+
 ## Features
 - **Natural Language Queries**: Enables AI agents to query and update Redis using natural language.
 - **Seamless MCP Integration**: Works with any **MCP client** for smooth communication.
@@ -41,20 +64,20 @@ Additional tools.
 
 ### Quick Start with uvx (Recommended)
 
-The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub without installation:
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub without installation on the MCP Client side:
 
 ```sh
 # Run with Redis URI
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --url redis://localhost:6379/0
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --url redis://localhost:6379/0
+
+# Run with Redis URI and SSL 
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --url "rediss://<USERNAME>:<PASSWORD>@<HOST>:<PORT>?ssl_cert_reqs=required&ssl_ca_certs=<PATH_TO_CERT>"
 
 # Run with individual parameters
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --host localhost --port 6379 --password mypassword
-
-# Run with SSL
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --url rediss://user:pass@redis.example.com:6380/0
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --host localhost --port 6379 --password mypassword
 
 # See all options
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --help
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --help
 ```
 
 ### Development Installation
@@ -88,22 +111,21 @@ When using the CLI interface, you can configure the server with command line arg
 
 ```sh
 # Basic Redis connection
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
   --host localhost \
   --port 6379 \
   --password mypassword
 
 # Using Redis URI (simpler)
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
   --url redis://user:pass@localhost:6379/0
 
 # SSL connection
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server \
-  --url rediss://user:pass@redis.example.com:6380/0 \
-  --ssl-ca-path /path/to/ca.pem
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
+  --url rediss://user:pass@redis.example.com:6379/0
 
 # See all available options
-uvx --from git+https://github.com/redis/mcp-redis.git@feature/uvx-cli-support redis-mcp-server --help
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --help
 ```
 
 **Available CLI Options:**
@@ -198,64 +220,25 @@ The simplest way to configure MCP clients is using `uvx`. Here are examples for 
 
 #### Claude Desktop
 
-Add this to your `claude_desktop_config.json`:
+Add this to your `claude_desktop_config.json`, remember to provide the full path to `uvx`.
 
 ```json
 {
-  "mcpServers": {
-    "redis": {
-      "command": "uvx",
-      "args": [
-        "redis-mcp-server",
-        "--url", "redis://localhost:6379/0"
-      ]
+    "mcpServers": {
+        "redis-mcp-server": {
+            "type": "stdio",
+            "command": "/Users/mortensi/.local/bin/uvx",
+            "args": [
+                "--from", "git+https://github.com/redis/mcp-redis.git",
+                "redis-mcp-server",
+                "--url", "redis://localhost:6379/0"
+            ]
+        }
     }
-  }
 }
 ```
 
-Or with individual parameters:
-
-```json
-{
-  "mcpServers": {
-    "redis": {
-      "command": "uvx",
-      "args": [
-        "redis-mcp-server",
-        "--host", "your-redis-host",
-        "--port", "6379",
-        "--password", "your-password"
-      ]
-    }
-  }
-}
-```
-
-#### VS Code with GitHub Copilot
-
-Add this to your `.vscode/mcp.json`:
-
-```json
-{
-  "servers": {
-    "redis": {
-      "type": "stdio",
-      "command": "uvx",
-      "args": [
-        "redis-mcp-server",
-        "--url", "redis://localhost:6379/0"
-      ]
-    }
-  }
-}
-```
-
-## Integration with Claude Desktop
-
-### Via Smithery
-
-If you'd like to test the [Redis MCP Server](https://smithery.ai/server/@redis/mcp-redis) deployed [by Smithery](https://smithery.ai/docs/deployments), you can configure Claude Desktop automatically:
+If you'd like to test the [Redis MCP Server](https://smithery.ai/server/@redis/mcp-redis) via Smithery, you can configure Claude Desktop automatically:
 
 ```bash
 npx -y @smithery/cli install @redis/mcp-redis --client claude
@@ -264,16 +247,59 @@ npx -y @smithery/cli install @redis/mcp-redis --client claude
 Follow the prompt and provide the details to configure the server and connect to Redis (e.g. using a Redis Cloud database).
 The procedure will create the proper configuration in the `claude_desktop_config.json` configuration file.
 
+#### VS Code with GitHub Copilot
+
+Add this to your `settings.json`:
+
+```json
+"mcp": {
+    "servers": {
+        "Redis MCP Server": {
+        "type": "stdio",
+        "command": "uvx", 
+        "args": [
+            "--from", "git+https://github.com/redis/mcp-redis.git",
+            "redis-mcp-server",
+            "--url", "redis://localhost:6379/0"
+        ]
+        },
+    }
+},
+```
+
+#### Augment
+
+Import the server via JSON:
+
+```json
+{
+  "mcpServers": {
+    "Redis MCP Server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/redis/mcp-redis.git",
+        "redis-mcp-server",
+        "--url",
+        "redis://localhost:6379/0"
+      ]
+    }
+  }
+}
+```
+
+
 ### Manual configuration
 
-You can configure Claude Desktop to use this MCP Server.
+You can configure Claude Desktop or any other MCP Client to use this MCP Server running the main file directly (it uses environment variables).
+The following example is for Claude Desktop, but the same applies to any other MCP Client.
 
 1. Specify your Redis credentials and TLS configuration
 2. Retrieve your `uv` command full path (e.g. `which uv`)
 3. Edit the `claude_desktop_config.json` configuration file
    - on a MacOS, at `~/Library/Application\ Support/Claude/`
 
-```commandline
+```json
 {
     "mcpServers": {
         "redis": {
@@ -297,7 +323,7 @@ You can configure Claude Desktop to use this MCP Server.
 }
 ```
 
-### Using with Docker
+### With Docker
 
 You can use a dockerized deployment of this server. You can either build your own image or use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image.
 
@@ -309,7 +335,7 @@ docker build -t mcp-redis .
 
 Finally, configure Claude Desktop to create the container at start-up. Edit the `claude_desktop_config.json` and add:
 
-```commandline
+```json
 {
   "mcpServers": {
     "redis": {
@@ -345,7 +371,7 @@ To use the Redis MCP Server with VS Code, you need:
 
 1. Enable the [agent mode](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode) tools. Add the following to your `settings.json`:
 
-```commandline
+```json
 {
   "chat.agent.enabled": true
 }
@@ -353,8 +379,7 @@ To use the Redis MCP Server with VS Code, you need:
 
 2. Add the Redis MCP Server configuration to your `mcp.json` or `settings.json`:
 
-```commandline
-// Example .vscode/mcp.json
+```json
 {
   "servers": {
     "redis": {
@@ -377,8 +402,7 @@ To use the Redis MCP Server with VS Code, you need:
 }
 ```
 
-```commandline
-// Example settings.json
+```json
 {
   "mcp": {
     "servers": {
