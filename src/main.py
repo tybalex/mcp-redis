@@ -2,20 +2,23 @@ import sys
 import os
 import click
 
-from src.common.connection import RedisConnectionManager
 from src.common.server import mcp
-import src.tools.server_management
-import src.tools.misc
-import src.tools.redis_query_engine
-import src.tools.hash
-import src.tools.list
-import src.tools.string
-import src.tools.json
-import src.tools.sorted_set
-import src.tools.set
-import src.tools.stream
-import src.tools.pub_sub
 from src.common.config import MCP_TRANSPORT, parse_redis_uri, set_redis_env_from_config, reload_redis_config
+
+
+def _import_tools():
+    """Import all tool modules after configuration is set up."""
+    import src.tools.server_management
+    import src.tools.misc
+    import src.tools.redis_query_engine
+    import src.tools.hash
+    import src.tools.list
+    import src.tools.string
+    import src.tools.json
+    import src.tools.sorted_set
+    import src.tools.set
+    import src.tools.stream
+    import src.tools.pub_sub
 
 
 class RedisMCPServer:
@@ -87,6 +90,9 @@ def cli(url, host, port, db, username, password,
     # Reload Redis configuration to pick up the new environment variables
     reload_redis_config()
 
+    # Import tools after configuration is set up (ensures Redis connection uses new config)
+    _import_tools()
+
     # Set MCP transport settings
     os.environ['MCP_TRANSPORT'] = mcp_transport
     os.environ['MCP_HOST'] = mcp_host
@@ -99,6 +105,8 @@ def cli(url, host, port, db, username, password,
 
 def main():
     """Legacy main function for backward compatibility."""
+    # Import tools (uses default environment variables)
+    _import_tools()
     server = RedisMCPServer()
     server.run()
 
