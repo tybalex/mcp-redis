@@ -63,11 +63,13 @@ Additional tools.
 
 ## Installation
 
-### Quick Start with uvx 
-
-The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub (from a branch, or use a tagged release). 
+The Redis MCP Server supports the `stdio` [transport](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio). Support to the `stremable-http` transport will be added in the future.
 
 > No PyPi package is available at the moment.
+
+### Quick Start with uvx 
+
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub (from a branch, or use a tagged release).
 
 ```sh
 # Run with Redis URI
