@@ -1,7 +1,7 @@
 import json
-from common.connection import RedisConnectionManager
+from src.common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
-from common.server import mcp
+from src.common.server import mcp
 from redis.typing import FieldT
 
 @mcp.tool()

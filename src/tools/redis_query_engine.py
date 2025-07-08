@@ -1,7 +1,7 @@
 import json
-from common.connection import RedisConnectionManager
+from src.common.connection import RedisConnectionManager
 from redis.exceptions import RedisError
-from common.server import mcp
+from src.common.server import mcp
 from redis.commands.search.query import Query
 from redis.commands.search.field import VectorField
 from redis.commands.search.index_definition import IndexDefinition

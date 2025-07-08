@@ -16,3 +16,10 @@ venv.bak/
 
 # UV lock file
 uv.lock
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~

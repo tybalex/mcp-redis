@@ -1,12 +1,10 @@
-import urllib
+import sys
+
 from dotenv import load_dotenv
 import os
+import urllib.parse
 
 load_dotenv()
-
-MCP_TRANSPORT = os.getenv('MCP_TRANSPORT', 'stdio')
-MCP_HOST = os.getenv('MCP_HOST', '127.0.0.1')
-MCP_PORT = os.getenv('MCP_PORT', 8000)
 
 REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "port": int(os.getenv('REDIS_PORT',6379)),
@@ -21,43 +19,81 @@ REDIS_CFG = {"host": os.getenv('REDIS_HOST', '127.0.0.1'),
              "cluster_mode": os.getenv('REDIS_CLUSTER_MODE', False) in ('true', '1', 't'),
              "db": int(os.getenv('REDIS_DB', 0))}
 
+def parse_redis_uri(uri: str) -> dict:
+    """Parse a Redis URI and return connection parameters."""
+    parsed = urllib.parse.urlparse(uri)
 
-def generate_redis_uri():
-    cfg = REDIS_CFG
-    scheme = "rediss" if cfg.get("ssl") else "redis"
-    host = cfg.get("host", "127.0.0.1")
-    port = cfg.get("port", 6379)
-    db = cfg.get("db", 0)
+    config = {}
 
-    username = cfg.get("username")
-    password = cfg.get("password")
-
-    # Auth part
-    if username:
-        auth_part = f"{urllib.parse.quote(username)}:{urllib.parse.quote(password)}@"
-    elif password:
-        auth_part = f":{urllib.parse.quote(password)}@"
+    # Scheme determines SSL
+    if parsed.scheme == 'rediss':
+        config['ssl'] = True
+    elif parsed.scheme == 'redis':
+        config['ssl'] = False
     else:
-        auth_part = ""
+        raise ValueError(f"Unsupported scheme: {parsed.scheme}")
 
-    # Base URI
-    base_uri = f"{scheme}://{auth_part}{host}:{port}/{db}"
+    # Host and port
+    config['host'] = parsed.hostname or '127.0.0.1'
+    config['port'] = parsed.port or 6379
 
-    # Additional SSL query parameters if SSL is enabled
-    query_params = {}
-    if cfg.get("ssl"):
-        if cfg.get("ssl_cert_reqs"):
-            query_params["ssl_cert_reqs"] = cfg["ssl_cert_reqs"]
-        if cfg.get("ssl_ca_certs"):
-            query_params["ssl_ca_certs"] = cfg["ssl_ca_certs"]
-        if cfg.get("ssl_keyfile"):
-            query_params["ssl_keyfile"] = cfg["ssl_keyfile"]
-        if cfg.get("ssl_certfile"):
-            query_params["ssl_certfile"] = cfg["ssl_certfile"]
-        if cfg.get("ssl_ca_path"):
-            query_params["ssl_ca_path"] = cfg["ssl_ca_path"]
+    # Database
+    if parsed.path and parsed.path != '/':
+        try:
+            config['db'] = int(parsed.path.lstrip('/'))
+        except ValueError:
+            config['db'] = 0
+    else:
+        config['db'] = 0
 
-    if query_params:
-        base_uri += "?" + urllib.parse.urlencode(query_params)
+    # Authentication
+    if parsed.username:
+        config['username'] = parsed.username
+    if parsed.password:
+        config['password'] = parsed.password
 
-    return base_uri
+    # Parse query parameters for SSL and other options
+    if parsed.query:
+        query_params = urllib.parse.parse_qs(parsed.query)
+
+        # Handle SSL parameters
+        if 'ssl_cert_reqs' in query_params:
+            config['ssl_cert_reqs'] = query_params['ssl_cert_reqs'][0]
+        if 'ssl_ca_certs' in query_params:
+            config['ssl_ca_certs'] = query_params['ssl_ca_certs'][0]
+        if 'ssl_ca_path' in query_params:
+            config['ssl_ca_path'] = query_params['ssl_ca_path'][0]
+        if 'ssl_keyfile' in query_params:
+            config['ssl_keyfile'] = query_params['ssl_keyfile'][0]
+        if 'ssl_certfile' in query_params:
+            config['ssl_certfile'] = query_params['ssl_certfile'][0]
+
+        # Handle other parameters. According to https://www.iana.org/assignments/uri-schemes/prov/redis,
+        # The database number to use for the Redis SELECT command comes from
+        #   either the "db-number" portion of the URI (described in the previous
+        #   section) or the value from the key-value pair from the "query" URI
+        #   field with the key "db".  If neither of these are present, the
+        #   default database number is 0.
+        if 'db' in query_params:
+            try:
+                config['db'] = int(query_params['db'][0])
+            except ValueError:
+                pass
+
+    return config
+
+
+def set_redis_config_from_cli(config: dict):
+    for key, value in config.items():
+        if key in ['port', 'db']:
+            # Keep port and db as integers
+            REDIS_CFG[key] = int(value)
+        elif key == 'ssl' or key == 'cluster_mode':
+            # Keep ssl and cluster_mode as booleans
+            REDIS_CFG[key] = bool(value)
+        elif isinstance(value, bool):
+            # Convert other booleans to strings for environment compatibility
+            REDIS_CFG[key] = 'true' if value else 'false'
+        else:
+            # Convert other values to strings
+            REDIS_CFG[key] = str(value) if value is not None else None

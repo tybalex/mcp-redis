@@ -12,6 +12,30 @@ The Redis MCP Server is a **natural language interface** designed for agentic ap
 - "Store the session with an expiration time"
 - "Index and search this vector"
 
+## Table of Contents
+- [Overview](#overview)
+- [Features](#features)
+- [Tools](#tools)
+- [Installation](#installation)
+  - [Quick Start with uvx](#quick-start-with-uvx)
+  - [Development Installation](#development-installation)
+  - [With Docker](#with-docker)
+- [Configuration](#configuration)
+  - [Configuration via command line arguments](#configuration-via-command-line-arguments)
+  - [Configuration via Environment Variables](#configuration-via-environment-variables)
+- [Integrations](#integrations)
+  - [OpenAI Agents SDK](#openai-agents-sdk)
+  - [Augment](#augment)
+  - [Claude Desktop](#claude-desktop)
+  - [VS Code with GitHub Copilot](#vs-code-with-github-copilot)
+- [Testing](#testing)
+- [Example Use Cases](#example-use-cases)
+- [Contributing](#contributing)
+- [License](#license)
+- [Badges](#badges)
+- [Contact](#contact)
+
+
 ## Features
 - **Natural Language Queries**: Enables AI agents to query and update Redis using natural language.
 - **Seamless MCP Integration**: Works with any **MCP client** for smooth communication.
@@ -39,7 +63,31 @@ Additional tools.
 
 ## Installation
 
-Follow these instructions to install the server.
+The Redis MCP Server supports the `stdio` [transport](https://modelcontextprotocol.io/docs/concepts/transports#standard-input%2Foutput-stdio). Support to the `stremable-http` transport will be added in the future.
+
+> No PyPi package is available at the moment.
+
+### Quick Start with uvx 
+
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub (from a branch, or use a tagged release).
+
+```sh
+# Run with Redis URI
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --url redis://localhost:6379/0
+
+# Run with Redis URI and SSL 
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --url "rediss://<USERNAME>:<PASSWORD>@<HOST>:<PORT>?ssl_cert_reqs=required&ssl_ca_certs=<PATH_TO_CERT>"
+
+# Run with individual parameters
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --host localhost --port 6379 --password mypassword
+
+# See all options
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --help
+```
+
+### Development Installation
+
+For development or if you prefer to clone the repository:
 
 ```sh
 # Clone the repository
@@ -50,169 +98,23 @@ cd mcp-redis
 uv venv
 source .venv/bin/activate
 uv sync
-```
 
-## Configuration
+# Run with CLI interface
+uv run redis-mcp-server --help
 
-To configure this Redis MCP Server, consider the following environment variables:
-
-| Name                 | Description                                               | Default Value |
-|----------------------|-----------------------------------------------------------|---------------|
-| `REDIS_HOST`         | Redis IP or hostname                                      | `"127.0.0.1"` |
-| `REDIS_PORT`         | Redis port                                                | `6379`        |
-| `REDIS_DB`           | Database                                                  | 0             |
-| `REDIS_USERNAME`     | Default database username                                 | `"default"`   |
-| `REDIS_PWD`          | Default database password                                 | ""            |
-| `REDIS_SSL`          | Enables or disables SSL/TLS                               | `False`       |
-| `REDIS_CA_PATH`      | CA certificate for verifying server                       | None          |
-| `REDIS_SSL_KEYFILE`  | Client's private key file for client authentication       | None          |
-| `REDIS_SSL_CERTFILE` | Client's certificate file for client authentication       | None          |
-| `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"`  |
-| `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None          |
-| `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`       |
-| `MCP_TRANSPORT`      | Use the `stdio`, `streamable-http` or `sse` transport     | `stdio`       |
-| `MCP_HOST`           | Server host when `streamable-http` or `sse` are set       | `127.0.0.1`   |
-| `MCP_PORT`           | Server port when `streamable-http` or `sse` are set       | `8000`        |
-
-
-There are several ways to set environment variables:
-
-1. **Using a `.env` File**:  
-  Place a `.env` file in your project directory with key-value pairs for each environment variable. Tools like `python-dotenv`, `pipenv`, and `uv` can automatically load these variables when running your application. This is a convenient and secure way to manage configuration, as it keeps sensitive data out of your shell history and version control (if `.env` is in `.gitignore`).
-
-For example, create a `.env` file with the following content from the `.env.example` file provided in the repository:
-
-  ```bash
-cp .env.example .env
-  ```
-
-
-  Then edit the `.env` file to set your Redis configuration:
-
-OR,
-
-2. **Setting Variables in the Shell**:  
-  You can export environment variables directly in your shell before running your application. For example:
-  ```sh
-  export REDIS_HOST=your_redis_host
-  export REDIS_PORT=6379
-  # Other variables will be set similarly...
-  ```
-  This method is useful for temporary overrides or quick testing.
-
-## Transports
-
-This MCP server can be configured to handle requests locally, running as a process and communicating with the MCP client via `stdin` and `stdout`.
-This is the default configuration, `stdio`. The `streamable-http` and `sse` (deprecated) transports are also configurable, which make the server available over the network.
-Configure the `MCP_TRANSPORT` variable accordingly.
-
-> Authentication has not yet been implemented, and [attackers could use DNS rebinding](https://modelcontextprotocol.io/docs/concepts/transports#security-considerations) to access the server.
-
-### Streamable HTTP
-
-```commandline
-export MCP_TRANSPORT="streamable-http"
-```
-
-Then start the server.
-
-```commandline
+# Or run the main file directly (uses environment variables)
 uv run src/main.py
 ```
 
-Configure in GitHub Copilot
-
-```commandline
-"mcp": {
-    "servers": {
-        "redis-mcp": {
-            "type": "http",
-            "url": "http://127.0.0.1:8000/mcp/"
-        },
-    }
-},
-```
-
-### SSE (deprecated)
-
-```commandline
-export MCP_TRANSPORT="sse"
-```
-
-Then start the server.
-
-```commandline
-uv run src/main.py
-```
-
-Test the server:
-
-```commandline
-curl -i http://127.0.0.1:8000/sse
-HTTP/1.1 200 OK
-```
-
-Integrate with your favorite tool or client. The VS Code configuration for GitHub Copilot is:
-
-```commandline
-"mcp": {
-    "servers": {
-        "redis-mcp": {
-            "type": "sse",
-            "url": "http://127.0.0.1:8000/sse"
-        },
-    }
-},
-```
-
-
-## Integration with OpenAI Agents SDK
-
-Integrate this MCP Server with the OpenAI Agents SDK. Read the [documents](https://openai.github.io/openai-agents-python/mcp/) to learn more about the integration of the SDK with MCP.
-
-Install the Python SDK.
-
-```commandline
-pip install openai-agents
-```
-
-Configure the OpenAI token:
-
-```commandline
-export OPENAI_API_KEY="<openai_token>"
-```
-
-And run the [application](./examples/redis_assistant.py).
-
-```commandline
-python3.13 redis_assistant.py
-```
-
-You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
-
-## Integration with Claude Desktop
-
-### Via Smithery
-
-If you'd like to test the [Redis MCP Server](https://smithery.ai/server/@redis/mcp-redis) deployed [by Smithery](https://smithery.ai/docs/deployments), you can configure Claude Desktop automatically:
-
-```bash
-npx -y @smithery/cli install @redis/mcp-redis --client claude
-```
-
-Follow the prompt and provide the details to configure the server and connect to Redis (e.g. using a Redis Cloud database).
-The procedure will create the proper configuration in the `claude_desktop_config.json` configuration file.
-
-### Manual configuration
-
-You can configure Claude Desktop to use this MCP Server.
+Once you cloned the repository, installed the dependencies and verified you can run the server, you can configure Claude Desktop or any other MCP Client to use this MCP Server running the main file directly (it uses environment variables). This is usually preferred for development.
+The following example is for Claude Desktop, but the same applies to any other MCP Client.
 
 1. Specify your Redis credentials and TLS configuration
 2. Retrieve your `uv` command full path (e.g. `which uv`)
 3. Edit the `claude_desktop_config.json` configuration file
    - on a MacOS, at `~/Library/Application\ Support/Claude/`
 
-```commandline
+```json
 {
     "mcpServers": {
         "redis": {
@@ -236,7 +138,13 @@ You can configure Claude Desktop to use this MCP Server.
 }
 ```
 
-### Using with Docker
+You can troubleshoot problems by tailing the log file.
+
+```commandline
+tail -f ~/Library/Logs/Claude/mcp-server-redis.log
+```
+
+### With Docker
 
 You can use a dockerized deployment of this server. You can either build your own image or use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image.
 
@@ -246,9 +154,9 @@ If you'd like to build your own image, the Redis MCP Server provides a Dockerfil
 docker build -t mcp-redis .
 ```
 
-Finally, configure Claude Desktop to create the container at start-up. Edit the `claude_desktop_config.json` and add:
+Finally, configure the client to create the container at start-up. An example for Claude Desktop is provided below. Edit the `claude_desktop_config.json` and add:
 
-```commandline
+```json
 {
   "mcpServers": {
     "redis": {
@@ -270,30 +178,204 @@ Finally, configure Claude Desktop to create the container at start-up. Edit the 
 
 To use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image, just replace your image name (`mcp-redis` in the example above) with `mcp/redis`.
 
-### Troubleshooting
+## Configuration
 
-You can troubleshoot problems by tailing the log file.
+The Redis MCP Server can be configured in two ways: via command line arguments or via environment variables.
+The precedence is: command line arguments > environment variables > default values.
 
-```commandline
-tail -f ~/Library/Logs/Claude/mcp-server-redis.log
+### Configuration via command line arguments
+
+When using the CLI interface, you can configure the server with command line arguments:
+
+```sh
+# Basic Redis connection
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
+  --host localhost \
+  --port 6379 \
+  --password mypassword
+
+# Using Redis URI (simpler)
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
+  --url redis://user:pass@localhost:6379/0
+
+# SSL connection
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server \
+  --url rediss://user:pass@redis.example.com:6379/0
+
+# See all available options
+uvx --from git+https://github.com/redis/mcp-redis.git redis-mcp-server --help
 ```
 
-## Integration with VS Code
+**Available CLI Options:**
+- `--url` - Redis connection URI (redis://user:pass@host:port/db)
+- `--host` - Redis hostname (default: 127.0.0.1)
+- `--port` - Redis port (default: 6379)
+- `--db` - Redis database number (default: 0)
+- `--username` - Redis username
+- `--password` - Redis password
+- `--ssl` - Enable SSL connection
+- `--ssl-ca-path` - Path to CA certificate file
+- `--ssl-keyfile` - Path to SSL key file
+- `--ssl-certfile` - Path to SSL certificate file
+- `--ssl-cert-reqs` - SSL certificate requirements (default: required)
+- `--ssl-ca-certs` - Path to CA certificates file
+- `--cluster-mode` - Enable Redis cluster mode
 
-To use the Redis MCP Server with VS Code, you need:
+### Configuration via Environment Variables
 
-1. Enable the [agent mode](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode) tools. Add the following to your `settings.json`:
+If desired, you can use environment variables. Defaults are provided for all variables.
+
+| Name                 | Description                                               | Default Value |
+|----------------------|-----------------------------------------------------------|---------------|
+| `REDIS_HOST`         | Redis IP or hostname                                      | `"127.0.0.1"` |
+| `REDIS_PORT`         | Redis port                                                | `6379`        |
+| `REDIS_DB`           | Database                                                  | 0             |
+| `REDIS_USERNAME`     | Default database username                                 | `"default"`   |
+| `REDIS_PWD`          | Default database password                                 | ""            |
+| `REDIS_SSL`          | Enables or disables SSL/TLS                               | `False`       |
+| `REDIS_CA_PATH`      | CA certificate for verifying server                       | None          |
+| `REDIS_SSL_KEYFILE`  | Client's private key file for client authentication       | None          |
+| `REDIS_SSL_CERTFILE` | Client's certificate file for client authentication       | None          |
+| `REDIS_CERT_REQS`    | Whether the client should verify the server's certificate | `"required"`  |
+| `REDIS_CA_CERTS`     | Path to the trusted CA certificates file                  | None          |
+| `REDIS_CLUSTER_MODE` | Enable Redis Cluster mode                                 | `False`       |
+
+
+There are several ways to set environment variables:
+
+1. **Using a `.env` File**:  
+Place a `.env` file in your project directory with key-value pairs for each environment variable. Tools like `python-dotenv`, `pipenv`, and `uv` can automatically load these variables when running your application. This is a convenient and secure way to manage configuration, as it keeps sensitive data out of your shell history and version control (if `.env` is in `.gitignore`).
+For example, create a `.env` file with the following content from the `.env.example` file provided in the repository:
+
+```bash
+cp .env.example .env
+```
+
+Then edit the `.env` file to set your Redis configuration:
+
+OR,
+
+2. **Setting Variables in the Shell**:  
+You can export environment variables directly in your shell before running your application. For example:
+
+```sh
+export REDIS_HOST=your_redis_host
+export REDIS_PORT=6379
+# Other variables will be set similarly...
+```
+
+This method is useful for temporary overrides or quick testing.
+
+
+## Integrations
+
+Integrating this MCP Server to development frameworks like OpenAI Agents SDK, or with tools like Claude Desktop, VS Code, or Augment is described in the following sections.
+
+### OpenAI Agents SDK
+
+Integrate this MCP Server with the OpenAI Agents SDK. Read the [documents](https://openai.github.io/openai-agents-python/mcp/) to learn more about the integration of the SDK with MCP.
+
+Install the Python SDK.
 
 ```commandline
+pip install openai-agents
+```
+
+Configure the OpenAI token:
+
+```commandline
+export OPENAI_API_KEY="<openai_token>"
+```
+
+And run the [application](./examples/redis_assistant.py).
+
+```commandline
+python3.13 redis_assistant.py
+```
+
+You can troubleshoot your agent workflows using the [OpenAI dashboard](https://platform.openai.com/traces/).
+
+### Augment
+
+You can configure the Redis MCP Server in Augment by importing the server via JSON:
+
+```json
+{
+  "mcpServers": {
+    "Redis MCP Server": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "git+https://github.com/redis/mcp-redis.git",
+        "redis-mcp-server",
+        "--url",
+        "redis://localhost:6379/0"
+      ]
+    }
+  }
+}
+```
+
+### Claude Desktop
+
+The simplest way to configure MCP clients is using `uvx`. Add the following JSON to your `claude_desktop_config.json`, remember to provide the full path to `uvx`.
+
+```json
+{
+    "mcpServers": {
+        "redis-mcp-server": {
+            "type": "stdio",
+            "command": "/Users/mortensi/.local/bin/uvx",
+            "args": [
+                "--from", "git+https://github.com/redis/mcp-redis.git",
+                "redis-mcp-server",
+                "--url", "redis://localhost:6379/0"
+            ]
+        }
+    }
+}
+```
+
+If you'd like to test the [Redis MCP Server](https://smithery.ai/server/@redis/mcp-redis) via Smithery, you can configure Claude Desktop automatically:
+
+```bash
+npx -y @smithery/cli install @redis/mcp-redis --client claude
+```
+
+Follow the prompt and provide the details to configure the server and connect to Redis (e.g. using a Redis Cloud database).
+The procedure will create the proper configuration in the `claude_desktop_config.json` configuration file.
+
+### VS Code with GitHub Copilot
+
+To use the Redis MCP Server with VS Code, you must nable the [agent mode](https://code.visualstudio.com/docs/copilot/chat/chat-agent-mode) tools. Add the following to your `settings.json`:
+
+```json
 {
   "chat.agent.enabled": true
 }
 ```
 
-2. Add the Redis MCP Server configuration to your `mcp.json` or `settings.json`:
+You can start the GitHub desired version of the Redis MCP server using `uvx` by adding the following JSON to your `settings.json`:
 
-```commandline
-// Example .vscode/mcp.json
+```json
+"mcp": {
+    "servers": {
+        "Redis MCP Server": {
+        "type": "stdio",
+        "command": "uvx", 
+        "args": [
+            "--from", "git+https://github.com/redis/mcp-redis.git",
+            "redis-mcp-server",
+            "--url", "redis://localhost:6379/0"
+        ]
+        },
+    }
+},
+```
+
+Alternatively, you can start the server using `uv` and configure your `mcp.json` or `settings.json`. This is usually desired for development.
+
+```json
 {
   "servers": {
     "redis": {
@@ -316,8 +398,7 @@ To use the Redis MCP Server with VS Code, you need:
 }
 ```
 
-```commandline
-// Example settings.json
+```json
 {
   "mcp": {
     "servers": {

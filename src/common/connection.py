@@ -1,12 +1,10 @@
 import sys
-from version import __version__
+from src.version import __version__
 import redis
 from redis import Redis
 from redis.cluster import RedisCluster
 from typing import Optional, Type, Union
-from common.config import REDIS_CFG
-
-from common.config import generate_redis_uri
+from src.common.config import REDIS_CFG
 
 
 class RedisConnectionManager:
@@ -31,7 +29,7 @@ class RedisConnectionManager:
                         "ssl_ca_certs": REDIS_CFG["ssl_ca_certs"],
                         "decode_responses": decode_responses,
                         "lib_name": f"redis-py(mcp-server_v{__version__})",
-                        "max_connections_per_node": 10 
+                        "max_connections_per_node": 10
                     }
                 else:
                     redis_class: Type[Union[Redis, RedisCluster]] = redis.Redis
