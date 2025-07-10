@@ -69,7 +69,14 @@ The Redis MCP Server supports the `stdio` [transport](https://modelcontextprotoc
 
 ### Quick Start with uvx 
 
-The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub (from a branch, or use a tagged release).
+The easiest way to use the Redis MCP Server is with `uvx`, which allows you to run it directly from GitHub (from a branch, or use a tagged release). It is recommended to use a tagged release, the `main` branch is under active development and may contain breaking changes. As an example, you can execute the following command to run the `0.2.0` release:
+
+```commandline
+uvx --from git+https://github.com/redis/mcp-redis.git@0.2.0 redis-mcp-server --url redis://localhost:6379/0
+```
+
+Check the release notes for the latest version in the [Releases](https://github.com/redis/mcp-redis/releases) section.
+Additional examples are provided below.
 
 ```sh
 # Run with Redis URI
