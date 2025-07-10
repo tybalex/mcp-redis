@@ -21,6 +21,7 @@ The Redis MCP Server is a **natural language interface** designed for agentic ap
   - [Development Installation](#development-installation)
   - [With Docker](#with-docker)
 - [Configuration](#configuration)
+  - [Redis ACL](#redis-acl)
   - [Configuration via command line arguments](#configuration-via-command-line-arguments)
   - [Configuration via Environment Variables](#configuration-via-environment-variables)
 - [Integrations](#integrations)
@@ -189,6 +190,16 @@ To use the official [Redis MCP Docker](https://hub.docker.com/r/mcp/redis) image
 
 The Redis MCP Server can be configured in two ways: via command line arguments or via environment variables.
 The precedence is: command line arguments > environment variables > default values.
+
+### Redis ACL
+
+You can configure Redis ACL to restrict the access to the Redis database. For example, to create a read-only user:
+
+```
+127.0.0.1:6379> ACL SETUSER readonlyuser on >mypassword ~* +@read -@write
+```
+
+Configure the user via command line arguments or environment variables.
 
 ### Configuration via command line arguments
 
