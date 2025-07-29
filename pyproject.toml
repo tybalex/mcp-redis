@@ -1,6 +1,6 @@
 [project]
 name = "redis-mcp-server"
-version = "0.2.0"
+dynamic = ["version"]
 description = "Redis MCP Server - Model Context Protocol server for Redis"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -38,9 +38,60 @@ Repository = "https://github.com/redis/mcp-redis"
 Issues = "https://github.com/redis/mcp-redis/issues"
 
 [build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["src*"]
+[tool.hatch.version]
+source = "vcs"
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+    "/pyproject.toml",
+]
+
+# Security configuration for bandit
+[tool.bandit]
+exclude_dirs = ["tests", "build", "dist"]
+skips = ["B101", "B601"]  # Skip assert_used and shell_injection_process_args if needed
+
+[tool.bandit.assert_used]
+skips = ["*_test.py", "*/test_*.py"]
+
+# Test configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+]
+
+[dependency-groups]
+dev = [
+    "bandit>=1.8.6",
+    "coverage>=7.10.1",
+    "isort>=6.0.1",
+    "mypy>=1.17.0",
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "pytest-cov>=6.2.1",
+    "ruff>=0.12.5",
+    "safety>=3.6.0",
+]
