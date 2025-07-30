@@ -27,3 +27,4 @@ uv.lock
 /safety-report.json
 /coverage.xml
 /.coverage
+/htmlcov/
