@@ -5,7 +5,7 @@ Unit tests for src/tools/list.py
 import pytest
 from redis.exceptions import RedisError
 
-from src.tools.list import lpush, rpush, lpop, rpop, lrange, llen
+from src.tools.list import llen, lpop, lpush, lrange, rpop, rpush
 
 
 class TestListOperations:
@@ -16,9 +16,9 @@ class TestListOperations:
         """Test successful left push operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.return_value = 2  # New length of list
-        
+
         result = await lpush("test_list", "value1")
-        
+
         mock_redis.lpush.assert_called_once_with("test_list", "value1")
         assert "Value 'value1' pushed to the left of list 'test_list'" in result
 
@@ -28,9 +28,9 @@ class TestListOperations:
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.return_value = 1
         mock_redis.expire.return_value = True
-        
+
         result = await lpush("test_list", "value1", 60)
-        
+
         mock_redis.lpush.assert_called_once_with("test_list", "value1")
         mock_redis.expire.assert_called_once_with("test_list", 60)
         # The implementation doesn't include expiration info in the message
@@ -41,9 +41,9 @@ class TestListOperations:
         """Test left push operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.side_effect = RedisError("Connection failed")
-        
+
         result = await lpush("test_list", "value1")
-        
+
         assert "Error pushing value to list 'test_list': Connection failed" in result
 
     @pytest.mark.asyncio
@@ -51,9 +51,9 @@ class TestListOperations:
         """Test successful right push operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.rpush.return_value = 3
-        
+
         result = await rpush("test_list", "value2")
-        
+
         mock_redis.rpush.assert_called_once_with("test_list", "value2")
         assert "Value 'value2' pushed to the right of list 'test_list'" in result
 
@@ -63,9 +63,9 @@ class TestListOperations:
         mock_redis = mock_redis_connection_manager
         mock_redis.rpush.return_value = 1
         mock_redis.expire.return_value = True
-        
+
         result = await rpush("test_list", "value2", 120)
-        
+
         mock_redis.rpush.assert_called_once_with("test_list", "value2")
         mock_redis.expire.assert_called_once_with("test_list", 120)
         # The implementation doesn't include expiration info in the message
@@ -76,9 +76,9 @@ class TestListOperations:
         """Test right push operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.rpush.side_effect = RedisError("Connection failed")
-        
+
         result = await rpush("test_list", "value2")
-        
+
         assert "Error pushing value to list 'test_list': Connection failed" in result
 
     @pytest.mark.asyncio
@@ -86,9 +86,9 @@ class TestListOperations:
         """Test successful left pop operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpop.return_value = "popped_value"
-        
+
         result = await lpop("test_list")
-        
+
         mock_redis.lpop.assert_called_once_with("test_list")
         assert result == "popped_value"
 
@@ -97,9 +97,9 @@ class TestListOperations:
         """Test left pop operation on empty list."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpop.return_value = None
-        
+
         result = await lpop("empty_list")
-        
+
         assert "List 'empty_list' is empty" in result
 
     @pytest.mark.asyncio
@@ -107,9 +107,9 @@ class TestListOperations:
         """Test left pop operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpop.side_effect = RedisError("Connection failed")
-        
+
         result = await lpop("test_list")
-        
+
         assert "Error popping value from list 'test_list': Connection failed" in result
 
     @pytest.mark.asyncio
@@ -117,9 +117,9 @@ class TestListOperations:
         """Test successful right pop operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.rpop.return_value = "right_popped_value"
-        
+
         result = await rpop("test_list")
-        
+
         mock_redis.rpop.assert_called_once_with("test_list")
         assert result == "right_popped_value"
 
@@ -128,9 +128,9 @@ class TestListOperations:
         """Test right pop operation on empty list."""
         mock_redis = mock_redis_connection_manager
         mock_redis.rpop.return_value = None
-        
+
         result = await rpop("empty_list")
-        
+
         assert "List 'empty_list' is empty" in result
 
     @pytest.mark.asyncio
@@ -138,9 +138,9 @@ class TestListOperations:
         """Test right pop operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.rpop.side_effect = RedisError("Connection failed")
-        
+
         result = await rpop("test_list")
-        
+
         assert "Error popping value from list 'test_list': Connection failed" in result
 
     @pytest.mark.asyncio
@@ -148,9 +148,9 @@ class TestListOperations:
         """Test successful list range operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lrange.return_value = ["item1", "item2", "item3"]
-        
+
         result = await lrange("test_list", 0, 2)
-        
+
         mock_redis.lrange.assert_called_once_with("test_list", 0, 2)
         assert result == '["item1", "item2", "item3"]'
 
@@ -159,7 +159,7 @@ class TestListOperations:
         """Test list range operation with default parameters."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lrange.return_value = ["item1", "item2"]
-        
+
         result = await lrange("test_list", 0, -1)
 
         mock_redis.lrange.assert_called_once_with("test_list", 0, -1)
@@ -170,9 +170,9 @@ class TestListOperations:
         """Test list range operation on empty list."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lrange.return_value = []
-        
+
         result = await lrange("empty_list", 0, -1)
-        
+
         assert "List 'empty_list' is empty or does not exist" in result
 
     @pytest.mark.asyncio
@@ -180,19 +180,21 @@ class TestListOperations:
         """Test list range operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lrange.side_effect = RedisError("Connection failed")
-        
+
         result = await lrange("test_list", 0, -1)
-        
-        assert "Error retrieving values from list 'test_list': Connection failed" in result
+
+        assert (
+            "Error retrieving values from list 'test_list': Connection failed" in result
+        )
 
     @pytest.mark.asyncio
     async def test_llen_success(self, mock_redis_connection_manager):
         """Test successful list length operation."""
         mock_redis = mock_redis_connection_manager
         mock_redis.llen.return_value = 5
-        
+
         result = await llen("test_list")
-        
+
         mock_redis.llen.assert_called_once_with("test_list")
         assert result == 5
 
@@ -201,9 +203,9 @@ class TestListOperations:
         """Test list length operation on empty list."""
         mock_redis = mock_redis_connection_manager
         mock_redis.llen.return_value = 0
-        
+
         result = await llen("empty_list")
-        
+
         assert result == 0
 
     @pytest.mark.asyncio
@@ -211,26 +213,30 @@ class TestListOperations:
         """Test list length operation with Redis error."""
         mock_redis = mock_redis_connection_manager
         mock_redis.llen.side_effect = RedisError("Connection failed")
-        
+
         result = await llen("test_list")
-        
-        assert "Error retrieving length of list 'test_list': Connection failed" in result
+
+        assert (
+            "Error retrieving length of list 'test_list': Connection failed" in result
+        )
 
     @pytest.mark.asyncio
-    async def test_push_operations_with_numeric_values(self, mock_redis_connection_manager):
+    async def test_push_operations_with_numeric_values(
+        self, mock_redis_connection_manager
+    ):
         """Test push operations with numeric values."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.return_value = 1
         mock_redis.rpush.return_value = 2
-        
+
         # Test with integer
         result1 = await lpush("test_list", 42)
         mock_redis.lpush.assert_called_with("test_list", 42)
-        
+
         # Test with float
         result2 = await rpush("test_list", 3.14)
         mock_redis.rpush.assert_called_with("test_list", 3.14)
-        
+
         assert "pushed to the left of list" in result1
         assert "pushed to the right of list" in result2
 
@@ -239,9 +245,9 @@ class TestListOperations:
         """Test list range operation with negative indices."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lrange.return_value = ["last_item"]
-        
+
         result = await lrange("test_list", -1, -1)
-        
+
         mock_redis.lrange.assert_called_once_with("test_list", -1, -1)
         assert result == '["last_item"]'
 
@@ -251,22 +257,24 @@ class TestListOperations:
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.return_value = 1
         mock_redis.expire.side_effect = RedisError("Expire failed")
-        
+
         result = await lpush("test_list", "value", 60)
-        
+
         # Should report the expire error
         assert "Error pushing value to list 'test_list': Expire failed" in result
 
     @pytest.mark.asyncio
-    async def test_push_operations_return_new_length(self, mock_redis_connection_manager):
+    async def test_push_operations_return_new_length(
+        self, mock_redis_connection_manager
+    ):
         """Test that push operations handle return values correctly."""
         mock_redis = mock_redis_connection_manager
         mock_redis.lpush.return_value = 3
         mock_redis.rpush.return_value = 4
-        
+
         result1 = await lpush("test_list", "value1")
         result2 = await rpush("test_list", "value2")
-        
+
         # Results should indicate successful push regardless of return value
         assert "pushed to the left of list" in result1
         assert "pushed to the right of list" in result2

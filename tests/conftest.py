@@ -2,10 +2,11 @@
 Pytest configuration and fixtures for Redis MCP Server tests.
 """
 
-import pytest
 from unittest.mock import Mock, patch
+
+import pytest
 import redis
-from redis.exceptions import RedisError, ConnectionError, TimeoutError
+from redis.exceptions import ConnectionError, RedisError, TimeoutError
 
 
 @pytest.fixture
@@ -25,7 +26,9 @@ def mock_redis_cluster():
 @pytest.fixture
 def mock_redis_connection_manager():
     """Mock the RedisConnectionManager to return a mock Redis connection."""
-    with patch('src.common.connection.RedisConnectionManager.get_connection') as mock_get_conn:
+    with patch(
+        "src.common.connection.RedisConnectionManager.get_connection"
+    ) as mock_get_conn:
         mock_redis = Mock(spec=redis.Redis)
         mock_get_conn.return_value = mock_redis
         yield mock_redis
@@ -75,7 +78,7 @@ def sample_json_data():
         "name": "John Doe",
         "age": 30,
         "city": "New York",
-        "hobbies": ["reading", "swimming"]
+        "hobbies": ["reading", "swimming"],
     }
 
 
@@ -87,7 +90,9 @@ def redis_error_scenarios():
         "timeout_error": TimeoutError("Operation timed out"),
         "generic_error": RedisError("Generic Redis error"),
         "auth_error": RedisError("NOAUTH Authentication required"),
-        "wrong_type": RedisError("WRONGTYPE Operation against a key holding the wrong kind of value"),
+        "wrong_type": RedisError(
+            "WRONGTYPE Operation against a key holding the wrong kind of value"
+        ),
     }
 
 
@@ -95,6 +100,7 @@ def redis_error_scenarios():
 def reset_connection_manager():
     """Reset the RedisConnectionManager singleton before each test."""
     from src.common.connection import RedisConnectionManager
+
     RedisConnectionManager._instance = None
     yield
     RedisConnectionManager._instance = None
@@ -103,15 +109,15 @@ def reset_connection_manager():
 @pytest.fixture
 def mock_numpy_array():
     """Mock numpy array for vector testing."""
-    with patch('numpy.array') as mock_array:
-        mock_array.return_value.tobytes.return_value = b'mock_binary_data'
+    with patch("numpy.array") as mock_array:
+        mock_array.return_value.tobytes.return_value = b"mock_binary_data"
         yield mock_array
 
 
 @pytest.fixture
 def mock_numpy_frombuffer():
     """Mock numpy frombuffer for vector testing."""
-    with patch('numpy.frombuffer') as mock_frombuffer:
+    with patch("numpy.frombuffer") as mock_frombuffer:
         mock_frombuffer.return_value.tolist.return_value = [0.1, 0.2, 0.3]
         yield mock_frombuffer
 
@@ -121,6 +127,7 @@ def mock_numpy_frombuffer():
 def event_loop():
     """Create an event loop for async tests."""
     import asyncio
+
     loop = asyncio.new_event_loop()
     yield loop
     loop.close()
