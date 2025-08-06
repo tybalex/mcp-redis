@@ -174,7 +174,8 @@ jobs:
 
     - name: ⚙️ Test MCP server startup (macOS)
       run: |
-        timeout 10s uv run python src/main.py || test $? = 124
+        brew install coreutils
+        gtimeout 10s uv run python src/main.py || test $? = 124
       env:
         REDIS_HOST: localhost
         REDIS_PORT: 6379
