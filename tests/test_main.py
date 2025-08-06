@@ -16,6 +16,7 @@ class TestRedisMCPServer:
     def test_init_prints_startup_message(self, capsys):
         """Test that RedisMCPServer initialization prints startup message."""
         server = RedisMCPServer()
+        assert server is not None
 
         captured = capsys.readouterr()
         assert "Starting the Redis MCP Server" in captured.err
