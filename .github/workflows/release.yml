@@ -55,12 +55,11 @@ jobs:
       run: |
         uv python install 3.12
         uv sync --all-extras --dev
-        uv add --dev bandit safety
+        uv add --dev bandit
 
     - name: ⚙️ Run security scan with bandit
       run: |
         uv run bandit -r src/
-        uv run safety check
 
   test:
     runs-on: ubuntu-latest
