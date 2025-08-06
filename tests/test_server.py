@@ -2,8 +2,7 @@
 Unit tests for src/common/server.py
 """
 
-import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 from src.common.server import mcp
 

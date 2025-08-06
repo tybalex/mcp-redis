@@ -3,8 +3,7 @@ Unit tests for src/tools/list.py
 """
 
 import pytest
-from unittest.mock import Mock, patch
-from redis.exceptions import RedisError, ConnectionError
+from redis.exceptions import RedisError
 
 from src.tools.list import lpush, rpush, lpop, rpop, lrange, llen
 

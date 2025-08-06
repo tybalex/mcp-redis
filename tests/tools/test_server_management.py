@@ -3,7 +3,6 @@ Unit tests for src/tools/server_management.py
 """
 
 import pytest
-from unittest.mock import Mock, patch
 from redis.exceptions import RedisError, ConnectionError
 
 from src.tools.server_management import dbsize, info, client_list

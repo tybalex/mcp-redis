@@ -3,7 +3,7 @@ Unit tests for src/common/config.py
 """
 
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 import os
 
 from src.common.config import parse_redis_uri, set_redis_config_from_cli, REDIS_CFG

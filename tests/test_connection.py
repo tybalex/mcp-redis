@@ -3,10 +3,8 @@ Unit tests for src/common/connection.py
 """
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-import redis
-from redis.cluster import RedisCluster
-from redis.exceptions import ConnectionError, TimeoutError, RedisError
+from unittest.mock import Mock, patch
+from redis.exceptions import ConnectionError
 
 from src.common.connection import RedisConnectionManager
 
@@ -153,6 +151,7 @@ class TestRedisConnectionManager:
         mock_redis_class.return_value = mock_redis_instance
         
         connection = RedisConnectionManager.get_connection(decode_responses=False)
+        assert connection == mock_redis_instance
         
         call_args = mock_redis_class.call_args[1]
         assert call_args["decode_responses"] is False
@@ -180,6 +179,7 @@ class TestRedisConnectionManager:
         mock_redis_class.return_value = mock_redis_instance
         
         connection = RedisConnectionManager.get_connection()
+        assert connection == mock_redis_instance
         
         call_args = mock_redis_class.call_args[1]
         assert call_args["ssl"] is True
@@ -213,6 +213,8 @@ class TestRedisConnectionManager:
         
         with patch('src.common.connection.__version__', '1.0.0'):
             connection = RedisConnectionManager.get_connection()
+
+            assert connection == mock_redis_instance
             
             call_args = mock_redis_class.call_args[1]
             assert "redis-py(mcp-server_v1.0.0)" in call_args["lib_name"]
@@ -304,6 +306,8 @@ class TestRedisConnectionManager:
         mock_redis_class.return_value = mock_redis_instance
         
         connection = RedisConnectionManager.get_connection()
+
+        assert connection == mock_redis_instance
         
         call_args = mock_redis_class.call_args[1]
         assert call_args["username"] is None

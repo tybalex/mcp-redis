@@ -3,9 +3,8 @@ Unit tests for src/tools/hash.py
 """
 
 import pytest
-from unittest.mock import Mock, patch
 import numpy as np
-from redis.exceptions import RedisError, ConnectionError
+from redis.exceptions import RedisError
 
 from src.tools.hash import hset, hget, hgetall, hdel, hexists, set_vector_in_hash, get_vector_from_hash
 

@@ -3,9 +3,7 @@ Unit tests for src/tools/json.py
 """
 
 import pytest
-from unittest.mock import Mock, patch
-import json
-from redis.exceptions import RedisError, ConnectionError
+from redis.exceptions import RedisError
 
 from src.tools.json import json_set, json_get, json_del
 

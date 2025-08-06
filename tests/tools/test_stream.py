@@ -4,7 +4,7 @@ Unit tests for src/tools/stream.py
 
 import pytest
 from unittest.mock import Mock, patch
-from redis.exceptions import RedisError, ConnectionError
+from redis.exceptions import RedisError
 
 from src.tools.stream import xadd, xrange, xdel
 

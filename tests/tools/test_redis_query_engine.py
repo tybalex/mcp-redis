@@ -5,8 +5,7 @@ Unit tests for src/tools/redis_query_engine.py
 import pytest
 from unittest.mock import Mock, patch
 import json
-import numpy as np
-from redis.exceptions import RedisError, ConnectionError
+from redis.exceptions import RedisError
 from redis.commands.search.field import VectorField
 from redis.commands.search.index_definition import IndexDefinition
 from redis.commands.search.query import Query
@@ -298,7 +297,8 @@ class TestRedisQueryEngineOperations:
             mock_np_array.return_value.astype.return_value.tobytes.return_value = b'query_vector_bytes'
             
             result = await vector_search_hash(sample_vector, k=1000)
-            
+            assert result == []  # Empty list when no results
+
             # Should handle large k values
             mock_ft.search.assert_called_once()
 
