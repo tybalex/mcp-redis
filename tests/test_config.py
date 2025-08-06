@@ -7,8 +7,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.common.config import (REDIS_CFG, parse_redis_uri,
-                               set_redis_config_from_cli)
+from src.common.config import REDIS_CFG, parse_redis_uri, set_redis_config_from_cli
 
 
 class TestParseRedisURI:

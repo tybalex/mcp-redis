@@ -36,13 +36,12 @@ jobs:
       run: |
         uv python install 3.12
         uv sync --all-extras --dev
-        uv add --dev ruff isort mypy
+        uv add --dev ruff mypy
 
     - name: ⚙️ Run linters and formatters
       run: |
         uv run ruff check src/ tests/
         uv run ruff format --check src/ tests/
-        uv run isort --check-only src/ tests/
         uv run mypy src/ --ignore-missing-imports
 
 

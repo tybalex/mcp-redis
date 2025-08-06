@@ -6,8 +6,15 @@ import numpy as np
 import pytest
 from redis.exceptions import RedisError
 
-from src.tools.hash import (get_vector_from_hash, hdel, hexists, hget, hgetall,
-                            hset, set_vector_in_hash)
+from src.tools.hash import (
+    get_vector_from_hash,
+    hdel,
+    hexists,
+    hget,
+    hgetall,
+    hset,
+    set_vector_in_hash,
+)
 
 
 class TestHashOperations:

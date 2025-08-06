@@ -11,9 +11,12 @@ from redis.commands.search.index_definition import IndexDefinition
 from redis.commands.search.query import Query
 from redis.exceptions import RedisError
 
-from src.tools.redis_query_engine import (create_vector_index_hash,
-                                          get_index_info, get_indexes,
-                                          vector_search_hash)
+from src.tools.redis_query_engine import (
+    create_vector_index_hash,
+    get_index_info,
+    get_indexes,
+    vector_search_hash,
+)
 
 
 class TestRedisQueryEngineOperations:
